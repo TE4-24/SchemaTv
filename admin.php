@@ -21,7 +21,7 @@
     </div>
 <?php
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $target_dir = "../uploads/";
+    $target_dir = "uploads/";
     $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
     $uploadOk = 1;
     $fileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
