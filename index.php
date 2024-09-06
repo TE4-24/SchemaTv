@@ -7,7 +7,7 @@
 
 <body>
   <?php
-
+  /*
   echo "<div class='header'>Schema</div>";
 
   echo "<div class='year-container'>";
@@ -22,17 +22,23 @@
   echo "<div class='class-schema-container'>
         <div class='te22'><h1 class='klass-namn'>TE22</h1></div>
         <div class='schema'>";
-
-  // Open the CSV file
-  if (($handle = fopen("class_schedules/TE22.csv", "r")) !== FALSE) {
-    // Loop through each row of the CSV file
-    $data = fgetcsv($handle, 1000, ",") !== FALSE;
-    // Echo the third index (index 2)
-    if (is_array($data) && isset($data[2])) {
-      echo $data[0] . "<br>";
+*/
+  // open the CSV file
+  if (($csvHandle = fopen("class_schedules/TE22.csv", "r")) !== FALSE) {
+    $currentDay = array();
+    while (($scheduleDays = fgetcsv($csvHandle, 1000, ",")) !== FALSE) {
+      $currentDay[] = $scheduleDays[0];
     }
-    // Close the CSV file
-    fclose($handle);
+
+    foreach ($currentDay as $day) {
+      echo "$day <br>";
+    }
+
+    // echo $currentDay[0];
+    // $timeAndClass = $currentDay[1];
+    // echo $timeAndClass;
+
+    fclose($csvHandle);
   } else {
     echo "Unable to open the CSV file.";
   }

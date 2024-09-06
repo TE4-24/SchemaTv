@@ -1,47 +1,59 @@
-### **PHP Backend:**
+# Checklista för schemavisare-projekt
 
-# Funktionen för att söka igenom schema.txt-filen och extrahera elevernas personnummer (SSN) baserat på deras klasser.
+### **Frontend**
 
-# Generering av lektioner för varje elev baserat på schemafilen.
+# Skapa grundläggande layout för visning av scheman.
 
-# Hämtning av elevernas namn och koppling till deras personnummer.
+# Implementera design från Figma för visning av scheman.
 
-# Konvertering av data om lektioner och elever till CSV-format.
+# Implementera en användarvänlig och estetiskt tilltalande presentation av scheman på webbsidan.
 
-# Format för att strukturera lektioner per veckodag.
+# Lägg till funktioner för att hantera överlappande kurser (logik för tidsberäkningar).
 
-# Generering av ett kombinerat schema för alla lektioner.
+### **Back-end**
 
-# Skapande av individuella klasscheman från det kombinerade schemat och lagring i separata CSV-filer.
+## Konfigurera PHP för att läsa CSV-filer
 
-### **Frontend:**
+# Öppna CSV-filen TE22.csv
 
-# Grundläggande struktur och implementation för att visa scheman (dock inte i final design).
+# Läs innehållet i CSV-filen
 
-### **Vad som återstår att göra**
+# Echo tredje index från CSV-filen
 
-### **Visualisering av scheman:**
+### **Implementera logik för att hantera flera klasser**
 
-# Implementera en användarvänlig och estetiskt tilltalande visualisering av scheman på hemsidan.
+# Lägg till logik för EE22, ES22, TE22
 
-# Använda Figma-designen som guide för den slutliga layouten och presentationen.
+### **Raspberry Pi Konfiguration**
 
-### **Hantera överlappande kurser:**
+# Konfigurera Raspberry Pi
 
-# Implementera logik för att hantera situationer där en klass har flera kurser parallellt vid samma tid.
+# Installera operativsystem
 
-# Räkna ut tidsskillnader och överlappningar för att bestämma hur mycket utrymme varje lektion ska ta upp i schemat.
+# Konfigurera nätverksinställningar
 
-### **Optimera tidsvisning:**
+# Konfigurera HDMI-utgång
 
-# Implementera funktionalitet för att beräkna och visa tidsdifferenser i schemat för att korrekt representera längden på varje lektion.
+# Dra ström till Raspberry Pi
 
-### **Ytterligare frontend-arbete:**
+# Anslut till nätverk
 
-# Fullfölj integrationen av Figma-designen på hemsidan.
+# Anslut HDMI-kabel
 
-# Se till att alla användarinteraktioner är smidiga och att sidan fungerar på alla enheter.
+### **Övrigt**
 
-### **Raspberry Pi:**
+# Dokumentera projektet
 
-#
+# Skapa README.md
+
+# Inkludera installationsinstruktioner
+
+# Inkludera användarmanual
+
+# Testa projektet
+
+# Testa front-end funktionalitet
+
+# Testa back-end funktionalitet
+
+# Testa Raspberry Pi konfiguration
