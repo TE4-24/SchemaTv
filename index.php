@@ -7,7 +7,7 @@
 
 <body>
   <?php
-
+  include 'admin.php';
   echo "<div class='header'>Schema</div>";
 
   echo "<div class='year-container'>";
