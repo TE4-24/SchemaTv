@@ -1,28 +1,47 @@
 <html lang="en">
 
 <head>
-  <title>Document</title>
+  <title>Dynamic Schedule</title>
   <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 
 <body>
   <?php
-  /*
-  echo "<div class='header'>Schema</div>";
+  $baseClasses = array("TE", "EE", "ES");
 
-  echo "<div class='year-container'>";
-  echo "<div class='class-schema-container'>
-        <div class='ee22'><h1 class='klassNamn'>EE22</h1></div>
-        <div class='schema'>placeholder</div>
-      </div>";
-  echo "<div class='class-schema-container'>
-        <div class='es22'><h1 class='klassNamn'>ES22</h1></div>
-        <div class='schema'>placeholder</div>
-      </div>";
-  echo "<div class='class-schema-container'>
-        <div class='te22'><h1 class='klassNamn'>TE22</h1></div>
-        <div class='schema'>";
-*/
+  if (isset($_GET['currentBaseClass'])) { //GET is used to
+    $currentBaseClass = $_GET['currentBaseClass'];
+  } else {
+    $currentBaseClass = $baseClasses[0]; // Default to the first base class
+  }
+
+  $currentIndex = array_search($currentBaseClass, $baseClasses);
+
+  $nextBaseClass = $baseClasses[($currentIndex + 1) % count($baseClasses)];
+
+  header("Refresh: 5; url=?currentBaseClass=$nextBaseClass");
+
+  function getClasses($baseClasses)
+  {
+    $currentYear = date("y"); // Get last two digits of the current year
+    $currentMonth = date("m");
+
+    if ($currentMonth < 8) { // Before August, use the previous academic year
+      $currentYear -= 1;
+    }
+
+    $classes = array();
+    // Generate class names for the last 2 years and the current year
+    for ($i = $currentYear - 2; $i <= $currentYear; $i++) {
+      foreach ($baseClasses as $class) {
+        $classes[] = $class . sprintf("%02d", $i); // Format year as two digits
+      }
+    }
+
+    return $classes;
+  }
+
+  include 'csv_converter.php';
 
   function displayMondaySchedule($className)
   {
@@ -30,15 +49,19 @@
         <div class='$className'><h1 class='klassNamn'>$className</h1></div>
         <div class='schema'>";
 
-    // open the CSV file
+    // Open the CSV file
     if (($csvHandle = fopen("class_schedules/$className.csv", "r")) !== FALSE) {
       $currentDay = array();
       while (($scheduleDays = fgetcsv($csvHandle, 1000, ",")) !== FALSE) {
-        $currentDay[] = $scheduleDays[0];
+        $currentDay[] = $scheduleDays[0]; // Assuming the first column is the day
       }
 
       foreach ($currentDay as $day) {
-        echo "<div>$day</div> <br>";
+        if ($day == "") {
+          continue;
+        } else {
+          echo "<div>$day</div> <br>";
+        }
       }
 
       fclose($csvHandle);
@@ -49,16 +72,23 @@
     echo "</div>
       </div>";
   }
-  echo "<div class='header'>Schema</div>";
 
+  // Display the header
+  echo "<div class='header'>Schema for $currentBaseClass</div>";
+
+  // Get dynamically generated class names for the current base class
+  $classes = getClasses([$currentBaseClass]);
+
+  // Start the container for the class schedules
   echo "<div class='year-container'>";
-  displayMondaySchedule('EE22');
-  displayMondaySchedule('ES22');
-  displayMondaySchedule('TE22');
-  #displayMondaySchedule('EE23');
 
+  // Display the schedule for each generated class
+  foreach ($classes as $className) {
+    displayMondaySchedule($className);
+  }
+
+  // End the container
   echo "</div>";
-
   ?>
 
 </body>
