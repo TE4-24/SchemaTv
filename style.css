@@ -11,6 +11,7 @@ body {
 }
 
 body {
+    background: linear-gradient(180deg, #bd25b0 0%, #9100d4 100%);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -18,6 +19,7 @@ body {
 }
 
 .header {
+    color: rgb(255, 160, 255);
     width: 100vw;
     border: 2px solid;
     text-align: center;
@@ -35,23 +37,33 @@ body {
 .class-schema-container {
     border: 2px solid;
     flex: 1;
-    text-align: center;
     display: flex;
     flex-direction: column;
     height: 100vh;
 
 }
 
-.klass-namn {
+.klassNamn {
+    text-align: center;
+    border-bottom-left-radius: 2rem;
+    border-bottom-right-radius: 2rem;
     font-size: 32px;
     font-weight: 800;
     padding-bottom: 10px;
+    color: white;
 }
 
 .schema {
     position: relative;
     display: flex;
-    font-size: 16px;
+    flex-direction: column;
+    font-size: 20px;
     font-weight: 600;
+    margin-top: 100px;
+}
 
+.schema>div {
+    display: flex;
+    padding: 10px;
+    border-bottom: 2px solid;
 }
