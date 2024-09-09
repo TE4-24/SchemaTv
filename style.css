@@ -1,29 +1,69 @@
-.mainContainer {
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f0f0f0;
-  flex-direction: column;
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
 }
-form {
-  display: flex;
-  flex-direction: column;
-  width: 300px;
-  height: 10vh;
-  padding: 20px;
-  align-items: center;
-  border: 1px solid #00ff0d;
-  border-radius: 5px;
-  justify-content: space-between;
-  background: linear-gradient(45deg ,#ad03e0, #c608df);
-}
-.chooseFolder{
-    width: 180px;
-}
+
+html,
 body {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    background: linear-gradient(180deg, #bd25b0 0%, #9100d4 100%);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin: 0;
+}
+
+.header {
+    color: rgb(255, 160, 255);
+    width: 100vw;
+    border: 2px solid;
+    text-align: center;
+    font-size: 32px;
+    font-weight: bolder;
+}
+
+.year-container {
+    width: 100vw;
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1;
+}
+
+.class-schema-container {
+    border: 2px solid;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+
+}
+
+.klassNamn {
+    text-align: center;
+    border-bottom-left-radius: 2rem;
+    border-bottom-right-radius: 2rem;
+    font-size: 32px;
+    font-weight: 800;
+    padding-bottom: 10px;
+    color: white;
+}
+
+.schema {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 100px;
+}
+
+.schema>div {
+    display: flex;
+    padding: 10px;
+    border-bottom: 2px solid;
 }
