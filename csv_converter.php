@@ -43,11 +43,11 @@ function getPupilsSSN()
     return [$pupils, $lines];
 }
 
-function getAllLessons($data, $schema)
+function getAllLessons($pupils, $schema)
 {
     $lessons = [];
 
-    foreach ($data as $pupil) {
+    foreach ($pupils as $pupil) {
         foreach ($pupil as $key => $value) {
             $pupil_lessons = [];
 
