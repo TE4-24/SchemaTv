@@ -11,7 +11,9 @@
 <body>
     <div class="mainContainer">
         <?php
+        ini_set('session.gc_maxlifetime', 1800);
         session_start();
+
 
         $password = "your_password"; // Set your password here
 
