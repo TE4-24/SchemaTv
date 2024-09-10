@@ -11,11 +11,13 @@
 <body>
     <div class="mainContainer">
         <?php
-        ini_set('session.gc_maxlifetime', 1800);
+        ini_set('session.gc_maxlifetime', 20);
         session_start();
 
+        $env = parse_ini_file('.env');
+        $password = $env['ADMIN_PASSWORD'];
 
-        $password = "your_password"; // Set your password here
+        // $password = "admin";
 
         if (isset($_POST['password'])) {
             if ($_POST['password'] === $password) {

@@ -42,7 +42,7 @@
 
   header("Refresh: 5; url=?currentBaseClass=$nextBaseClass");
 
-  function displayMondaySchedule($className)
+  function displayMondaySchedule($className, $day)
   {
     echo "<div class='class-schema-container'>
         <div class='$className'><h1 class='klassNamn'>$className</h1></div>
@@ -53,7 +53,7 @@
     if (($csvHandle = fopen(getcwd() . "/admin/class_schedules/$className.csv", "r")) !== FALSE) {
       $currentDay = array();
       while (($scheduleDays = fgetcsv($csvHandle, 1000, ",")) !== FALSE) {
-        $currentDay[] = $scheduleDays[0]; // Assuming the first column is the day
+        $currentDay[] = $scheduleDays[$day];
       }
 
       foreach ($currentDay as $day) {
@@ -84,7 +84,7 @@
 
   // Display the schedule for each generated class
   foreach ($classes as $className) {
-    displayMondaySchedule($className);
+    displayMondaySchedule($className, 2);
   }
 
   // End the container

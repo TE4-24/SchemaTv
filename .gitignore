@@ -7,3 +7,9 @@ combined_schedule/
 lessons.csv
 pupils_lessons.csv
 
+.env
+
+vendor/
+
+composer.lock
+composer.json
