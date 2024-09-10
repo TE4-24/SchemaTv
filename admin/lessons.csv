@@ -1,18 +1,18 @@
 lektion,tid,dag
 "Datasam o support","12:45,14:35",Tisdag
 "Datasam o support","9:55,11:45",Tisdag
-Komnät,"8:00,09:40",Tisdag
+Komnï¿½t,"8:00,09:40",Tisdag
 "Idrott1 EE24","13:40,14:40",Tisdag
 Ma1a,"12:15,13:35",Tisdag
 "Eng5 EE24","9:55,11:20",Tisdag
 "Idrott1 ES24/TE24","12:00,13:15",Tisdag
 "Idrott1 ES23/TE23","10:00,11:00",Tisdag
 "Graf kom1","13:25,14:45",Tisdag
-Nätverkssäk,"12:00,14:50",Tisdag
+Nï¿½tverkssï¿½k,"12:00,14:50",Tisdag
 Samh1a1,"10:05,11:00",Tisdag
 Eng7,"8:10,09:50",Tisdag
 "Idrott spec 1","8:10,10:00",Tisdag
-Komnät,"8:10,10:55",Tisdag
+Komnï¿½t,"8:10,10:55",Tisdag
 "Eng6 EE23","12:00,13:15",Tisdag
 "Sv2 EE23","13:20,14:55",Tisdag
 "Japanska 1","15:00,17:00",Tisdag
@@ -31,15 +31,15 @@ Prog2,"12:05,13:35",Tisdag
 Ma2c,"9:35,10:55",Tisdag
 Ma1c,"9:35,10:55",Tisdag
 "Datasam o support","12:45,14:35",Onsdag
-"Adm servar o nätverk","10:05,11:55",Onsdag
-"Dator o nätverkstek","8:10,09:55",Onsdag
+"Adm servar o nï¿½tverk","10:05,11:55",Onsdag
+"Dator o nï¿½tverkstek","8:10,09:55",Onsdag
 Tek1,"8:10,09:30",Onsdag
-"Nätverkstek EE22","12:00,16:20",Onsdag
+"Nï¿½tverkstek EE22","12:00,16:20",Onsdag
 Sv3,"8:10,09:40",Onsdag
 "El o mikrodattek","9:50,11:10",Onsdag
 Digiskap1,"8:10,09:40",Onsdag
-Nätverkssäk,"16:25,16:55",Onsdag
-"Dator o nätverkstek","8:10,09:30",Onsdag
+Nï¿½tverkssï¿½k,"16:25,16:55",Onsdag
+"Dator o nï¿½tverkstek","8:10,09:30",Onsdag
 "Eng6 EE23","9:40,11:00",Onsdag
 "Webbservprog 1 EE23/TE22","12:00,14:40",Onsdag
 Ma2a,"14:50,16:30",Onsdag
@@ -63,8 +63,8 @@ Ma3c,"12:00,13:20",Onsdag
 Ma2c,"13:25,14:45",Onsdag
 Ma1c,"13:25,14:45",Onsdag
 Ke1,"14:55,16:15",Onsdag
-Komnät,"8:00,09:40",Torsdag
-"Adm servar o nätverk","9:50,11:45",Torsdag
+Komnï¿½t,"8:00,09:40",Torsdag
+"Adm servar o nï¿½tverk","9:50,11:45",Torsdag
 "Re1 ES23/TE23","8:10,09:30",Torsdag
 "Gymarb EE22","11:50,15:15",Torsdag
 "Tillprog EE22","8:10,09:40",Torsdag
@@ -79,7 +79,7 @@ Hi1a1,"8:10,09:00",Torsdag
 Elektromekanik,"8:10,09:35",Torsdag
 Energitek1,"9:40,11:05",Torsdag
 "Prog1 EE24/TE23","12:00,13:25",Torsdag
-"Nätverkstechno EE24","13:35,15:30",Torsdag
+"Nï¿½tverkstechno EE24","13:35,15:30",Torsdag
 "Gymarb ES22","8:10,09:30",Torsdag
 "Idrott spec 2","15:20,17:00",Torsdag
 Ani2,"9:40,11:00",Torsdag
@@ -95,16 +95,16 @@ Ma4,"9:40,11:00",Torsdag
 Ma2c,"8:10,09:30",Torsdag
 Ma1c,"8:10,09:30",Torsdag
 Ke1,"12:00,13:20",Torsdag
-"Dator o nätverkstek","8:10,09:55",Fredag
-"Adm servar o nätverk","10:00,11:50",Fredag
-"Nätverkstechno EE22","12:00,13:45",Fredag
-Nätverkssäk,"13:50,14:50",Fredag
+"Dator o nï¿½tverkstek","8:10,09:55",Fredag
+"Adm servar o nï¿½tverk","10:00,11:50",Fredag
+"Nï¿½tverkstechno EE22","12:00,13:45",Fredag
+Nï¿½tverkssï¿½k,"13:50,14:50",Fredag
 "Tillprog EE22","15:00,17:00",Fredag
 Nk1a1,"9:55,11:00",Fredag
-"Nätverkstek EE23","8:10,11:00",Fredag
+"Nï¿½tverkstek EE23","8:10,11:00",Fredag
 "Sv2 EE23","12:00,14:05",Fredag
 Hi1a1,"14:15,15:00",Fredag
-"Adm servar o nätverk","15:05,17:00",Fredag
+"Adm servar o nï¿½tverk","15:05,17:00",Fredag
 "Sv1 EE24","9:45,11:10",Fredag
 "Eng5 EE24","12:10,13:35",Fredag
 Ma1a,"13:40,15:10",Fredag
@@ -131,13 +131,13 @@ Ma2a,"14:00,14:50",MÃ¥ndag
 Nk1a1,"8:10,09:10",MÃ¥ndag
 Digiskap1,"9:20,11:00",MÃ¥ndag
 "El o mikrodattek","11:50,13:10",MÃ¥ndag
-Nätverksadm,"13:15,15:00",MÃ¥ndag
-"Dator o nätverkstek","8:10,09:35",MÃ¥ndag
-"Nätverkstek EE23","12:00,13:00",MÃ¥ndag
+Nï¿½tverksadm,"13:15,15:00",MÃ¥ndag
+"Dator o nï¿½tverkstek","8:10,09:35",MÃ¥ndag
+"Nï¿½tverkstek EE23","12:00,13:00",MÃ¥ndag
 Mekatronik,"13:15,14:55",MÃ¥ndag
 "Idrott spec 1B","15:00,16:20",MÃ¥ndag
 Ma2a,"15:00,16:35",MÃ¥ndag
-"Nätverkstechno EE24","10:00,11:00",MÃ¥ndag
+"Nï¿½tverkstechno EE24","10:00,11:00",MÃ¥ndag
 Ma1a,"13:25,14:55",MÃ¥ndag
 Ma2b,"8:10,09:10",MÃ¥ndag
 Sv3,"9:20,11:00",MÃ¥ndag
