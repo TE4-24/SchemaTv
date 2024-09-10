@@ -1,9 +1,31 @@
 <?php
 
+function getClassess($baseClasses)
+{
+  $currentYear = date("y"); // Get last two digits of the current year
+  $currentMonth = date("m");
+
+  if ($currentMonth < 8) { // Before August, use the previous academic year
+    $currentYear -= 1;
+  }
+
+  $classes = array();
+  // Generate class names for the last 2 years and the current year
+  for ($i = $currentYear - 2; $i <= $currentYear; $i++) {
+    foreach ($baseClasses as $class) {
+      $classes[] = $class . sprintf("%02d", $i); // Format year as two digits
+    }
+  }
+
+  return $classes;
+}
+
 function getPupilsSSN()
 {
-    $classes = ["TE22", "TE23", "TE24", "EE22", "EE23", "EE24", "ES22", "ES23", "ES24", "TE4"];
+    $baseClasses = ["TE", "EE", "ES"];
+    $classes = getClassess($baseClasses);
     $pupils = [];
+
     $schema = file_get_contents("./uploads/schema.txt");
     $lines = explode("\n", $schema);
 
@@ -134,7 +156,7 @@ function formatDaysToLessons($data, $df)
             if (strpos($line, $day) !== false) {
                 foreach ($df as $row) {
                     $lektion = $row['lektion'];
-                    if (strpos($line, $lektion) !== false) {
+                    if (preg_match("/\b" . preg_quote($lektion, '/') . "\b/", $line)) {
                         $line_data = explode("\t", $line);
                         $p2 = in_array("P2", $line_data);
 
@@ -317,19 +339,21 @@ function createClassScheduleFromCombinedSchedule($df_schedule)
                 list($lesson_name, $lesson_time) = explode(" (", rtrim($lesson, ")"));
 
                 foreach ($pupil_lessons_df as $pupil_row) {
-                    if (strpos($pupil_row[2], $lesson_name) !== false) {
+                    $lesson_name_cleaned = preg_replace('/\s+\(.*\)/', '', $lesson_name);
+                    if (preg_match("/\b" . preg_quote($lesson_name_cleaned, '/') . "\b/", $pupil_row[2])) {
                         $kurs = $pupil_row[0];
-
+                
                         if (!isset($class_data[$kurs])) {
                             $class_data[$kurs] = array_fill_keys($days_of_week, []);
                         }
-
+                
                         // Check if this lesson is already added to avoid duplicates
                         if (!in_array($lesson_time . ": " . $lesson_name, $class_data[$kurs][$day])) {
                             $class_data[$kurs][$day][] = $lesson_time . ": " . $lesson_name;
                         }
                     }
                 }
+                
             }
         }
     }
@@ -381,3 +405,5 @@ function main()
 }
 
 main();
+
+?>

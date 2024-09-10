@@ -9,20 +9,17 @@
 </head>
 
 <body>
-    <video autoplay muted loop id="myVideo">
-        <source src="rain.mp4" type="video/mp4">
-    </video>
     <div class="mainContainer">
         <div class='uploadContainer'>
             <?php
-            echo "<form action='upload.php' method='post' enctype='multipart/form-data'>";
+            echo "<form action='/admin' method='post' enctype='multipart/form-data'>";
             echo "<input type='file' name='fileToUpload' id='fileToUpload' class='chooseFolder'>";
             echo "<input type='submit' value='Upload' name='submit'>";
             echo "</form>";
             ?>
         </div>
         <?php
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (!file_exists("uploads")) {
                 mkdir("uploads");
             }
@@ -42,7 +39,8 @@
                 if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_dir . "schema.txt")) {
                     echo "The file has been uploaded.";
 
-                    include 'csv_converter.php';
+                    // include php converter in ../csv_converter.php
+                    include '../csv_converter.php';
                 } else {
                     echo "Sorry, there was an error uploading your file.";
                 }
