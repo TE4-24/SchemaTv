@@ -74,7 +74,7 @@
   }
 
   // Display the header
-  echo "<div class='header'>Schema for $currentBaseClass</div>";
+  echo "<div class='header'><a href='/admin'>Schema for $currentBaseClass</a></div>";
 
   // Get dynamically generated class names for the current base class
   $classes = getClasses([$currentBaseClass]);
