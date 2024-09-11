@@ -8,28 +8,28 @@
 
 html,
 body {
-  height: 100%;
+  min-height: 100vh;
   margin: 0;
 }
 
 /* Body Background with Cool Gradient */
 body {
-  background: linear-gradient(120deg, #6a11cb 0%, #2575fc 100%);
+  background: linear-gradient(0deg, #4B0082 0%, #DD0890 100%);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
+  overflow: auto;
 }
 
 /* Header Styling with Neon-Like Text Effect */
+
+
+/*
 .header {
   color: #ffdfdf;
   text-shadow: 0 0 15px rgba(255, 255, 255, 0.7), 0 0 20px #ff99ff,
     0 0 30px #ff66cc, 0 0 40px #ff33cc;
-  background: #282828;
-  border: 2px solid #ff66cc;
-  width: 100%;
   text-align: center;
   font-size: 36px;
   padding: 20px;
@@ -37,40 +37,55 @@ body {
   animation: pulse 2s infinite ease-in-out;
 }
 
+.header>a {
+  text-decoration: none;
+  color: #ffdfdf;
+}
+*/
+
+
 /* Pulsing Animation for the Header */
 @keyframes pulse {
   0% {
     text-shadow: 0 0 10px #ff33cc, 0 0 20px #ff66cc, 0 0 30px #ff99ff;
   }
+
   100% {
     text-shadow: 0 0 25px #ff33cc, 0 0 35px #ff66cc, 0 0 50px #ff99ff;
   }
 }
 
-/* Year Container Styling */
+
 .year-container {
-  width: 90%;
-  max-width: 1200px;
-  margin: 20px auto;
+  /* max-width: 1200px; */
+  /* margin: 30px auto; */
   display: flex;
   justify-content: space-around;
-  align-items: flex-start;
+  /* align-items: flex-start; */
+  /* align-items: center; */
+  padding: 40px 0;
 }
 
-/* Class Schema Container with Glowing Borders */
+/* when screen less 768 px flex col for year-container */
+@media screen and (max-width: 768px) {
+  .year-container {
+    flex-direction: column;
+  }
+}
+
 .class-schema-container {
   flex: 1;
-  margin: 0 10px;
+  margin: 10px 10px;
   padding: 15px;
   border-radius: 20px;
-  border: 2px solid #ff66cc;
-  box-shadow: 0 0 20px rgba(255, 102, 204, 0.5);
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
+  /* border: 2px solid #EBEBEB; */
+  /* box-shadow: 0 0 20px rgba(255, 102, 204, 0.5); */
+  background: rgb(51, 51, 51, 0.5);
   position: relative;
   overflow: hidden;
-  height: 85vh;
+  height: 100%;
 }
+
 
 /* Class Name Styling */
 .klassNamn {
@@ -79,23 +94,26 @@ body {
   font-weight: 800;
   margin-bottom: 20px;
   color: #fff;
-  background: linear-gradient(90deg, #ff33cc, #ff66cc);
+  /* background: linear-gradient(90deg, #ff33cc, #ff66cc); */
+  background-color: rgb(221, 8, 144, 0.9);
   padding: 15px;
   border-radius: 30px 30px 0 0;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
   animation: bounce 1.5s infinite ease-in-out;
 }
 
-/* Bounce Animation for Class Name */
-@keyframes bounce {
-  0%,
-  100% {
-    transform: translateY(0);
+
+/* @keyframes bounce {
+  
+0%,
+100% {
+  transform: translateY(0);
   }
+  
   50% {
     transform: translateY(-10px);
-  }
-}
+    }
+    } */
 
 /* Schema Styling */
 .schema {
@@ -107,31 +125,32 @@ body {
 }
 
 /* Individual Time Slot in Schedule */
-.schema > div {
+.schema>div {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 15px;
   margin: 5px 0;
-  border-radius: 10px;
-  background: linear-gradient(120deg, #ff66cc, #ff99ff);
-  color: #333;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+  /* border-radius: 10px; */
+  /* background: linear-gradient(120deg, #ff66cc, #ff99ff); */
+  color: #EBEBEB;
+  /* box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3); */
   transition: all 0.3s ease;
+  border-bottom: 2px solid;
 }
 
 /* Time and Class Name Inside Each Time Slot */
-.schema > div .time {
+.schema>div .time {
   font-size: 18px;
   font-weight: bold;
 }
 
-.schema > div .className {
+.schema>div .className {
   font-size: 20px;
   font-weight: 700;
 }
 
-/* Media Query for Responsive Styling */
+/* Media Query for Responsive Styling
 @media (max-width: 768px) {
   .year-container {
     flex-direction: column;
@@ -142,8 +161,8 @@ body {
     height: auto;
   }
 
-  .schema > div {
+  .schema>div {
     flex-direction: column;
     text-align: center;
   }
-}
+} */
