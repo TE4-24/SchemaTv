@@ -46,11 +46,11 @@
             echo "<form action='/admin' method='post' enctype='multipart/form-data'>";
             echo "<input type='file' name='fileToUpload' id='fileToUpload' class='chooseFolder'>";
             echo "<input type='submit' value='Upload' name='submit'>";
-        echo "</form>";
-        echo "</div>";
-    }
-    ?>
-</div>
+            echo "</form>";
+            echo "</div>";
+        }
+        ?>
+    </div>
 </body>
 
 </html>

@@ -40,7 +40,7 @@
 
   $nextBaseClass = $baseClasses[($currentIndex + 1) % count($baseClasses)];
 
-  header("Refresh: 5; url=?currentBaseClass=$nextBaseClass");
+  header("Refresh: null; url=?currentBaseClass=$nextBaseClass");
 
   function displayDaySchedule($className, $day)
   {
@@ -74,7 +74,7 @@
   }
   
   // Display the header
-  echo "<div class='header'><a href='/admin'>Schema for $currentBaseClass</a></div>";
+  // echo "<div class='header'><a href='/admin'>Schema for $currentBaseClass</a></div>";
 
   // Get dynamically generated class names for the current base class
   $classes = getClasses([$currentBaseClass]);
