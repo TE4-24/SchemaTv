@@ -7,7 +7,7 @@
 
 <body>
   <?php
-   
+  $dayOfWeek = date("w") - 1;
    function getClasses($baseClasses)
    {
      $currentYear = date("y"); // Get last two digits of the current year
@@ -30,19 +30,19 @@
 
   $baseClasses = array("TE", "EE", "ES");
 
-  if (isset($_GET['currentBaseClass'])) { //GET is used to
-    $currentBaseClass = $_GET['currentBaseClass'];
+  if (isset($_GET['currentBaseClass'])) { //GET is used to get data from a specified resource (URL) and the data is visible to everyone in the URL bar. 
+    $currentBaseClass = $_GET['currentBaseClass']; // Get the current base class from the URL 
   } else {
-    $currentBaseClass = $baseClasses[0]; // Default to the first base class
+    $currentBaseClass = $baseClasses[0]; // Default to the first base class if not set 
   }
 
-  $currentIndex = array_search($currentBaseClass, $baseClasses);
+  $currentIndex = array_search($currentBaseClass, $baseClasses); // Get the index of the current base class 
 
   $nextBaseClass = $baseClasses[($currentIndex + 1) % count($baseClasses)];
 
   header("Refresh: 5; url=?currentBaseClass=$nextBaseClass");
 
-  function displayMondaySchedule($className, $day)
+  function displayDaySchedule($className, $day)
   {
     echo "<div class='class-schema-container'>
         <div class='$className'><h1 class='klassNamn'>$className</h1></div>
@@ -72,7 +72,7 @@
     echo "</div>
       </div>";
   }
-
+  
   // Display the header
   echo "<div class='header'><a href='/admin'>Schema for $currentBaseClass</a></div>";
 
@@ -84,8 +84,9 @@
 
   // Display the schedule for each generated class
   foreach ($classes as $className) {
-    displayMondaySchedule($className, 2);
+    displayDaySchedule($className, $dayOfWeek);
   }
+
 
   // End the container
   echo "</div>";
