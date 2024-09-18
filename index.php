@@ -1,12 +1,12 @@
 <html lang="en">
 
 <head>
-  <title>Dynamic Schedule</title>
-  <link rel="stylesheet" type="text/css" href="style.css" />
+    <title>Dynamic Schedule</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 
 <body>
-  <?php
+    <?php
   $dayOfWeek = date("w") - 1;
    function getClasses($baseClasses)
    {

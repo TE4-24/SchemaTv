@@ -3,6 +3,7 @@
 
 class_schedules/
 combined_schedule/
+uploads/
 
 lessons.csv
 pupils_lessons.csv
@@ -10,6 +11,8 @@ pupils_lessons.csv
 .env
 
 vendor/
+
+
 
 composer.lock
 composer.json

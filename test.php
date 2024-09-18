@@ -8,26 +8,12 @@
     <title>File Upload</title>
 </head>
 
-
 <body>
     <div class="mainContainer">
         <?php
-        ini_set('session.gc_maxlifetime', 10); // Set session max lifetime to 20 minutes (1200 seconds)
         session_start();
 
-        // Set the session timeout duration (in seconds)
-        $session_timeout = 10; // 20 minutes
-
-        // Check if the session is set and if it has expired
-        if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > $session_timeout)) {
-            // Last request was more than $session_timeout seconds ago
-            session_unset();     // Unset $_SESSION variable for the run-time
-            session_destroy();   // Destroy session data in storage
-        }
-        $_SESSION['LAST_ACTIVITY'] = time(); // Update last activity time stamp
-
-        $env = parse_ini_file('.env');
-        $password = $env['ADMIN_PASSWORD'];
+        $password = "your_password"; // Set your password here
 
         if (isset($_POST['password'])) {
             if ($_POST['password'] === $password) {
@@ -49,7 +35,7 @@
             echo "<input type='submit' value='Upload' name='submit'>";
             echo "</form>";
             echo "</div>";
-            
+
             if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["fileToUpload"])) {
                 if (!file_exists("uploads")) {
                     mkdir("uploads");
@@ -82,4 +68,4 @@
     </div>
 </body>
 
-</html>
+</html>"
