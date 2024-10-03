@@ -62,7 +62,9 @@ function displayDaySchedule($className, $day, $currentTime)
                     // Compare current time with lesson end time
                     if ($currentTime > $endTime) {
                         $output .= "<div class='greyed-out'>$timeRange: $lessonDetails</div><br>";
-                    } else {
+                    } elseif ($currentTime >= $startTime && $currentTime <= $endTime) {
+                        $output .= "<div class='current-lesson'>$timeRange: $lessonDetails</div><br>";
+                    }else {
                         $output .= "<div>$timeRange: $lessonDetails</div><br>";
                     }
                 }

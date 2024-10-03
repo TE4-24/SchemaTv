@@ -62,7 +62,7 @@
                         list($startTime, $endTime) = explode("-", $timeRange);
 
                         if ($currentTime > $endTime) {
-                            echo "<div class='greyed-out'>$timeRange: $lessonDetails</div> <br>";
+                            echo "<div class=''>$timeRange: $lessonDetails</div> <br>";
                         } elseif ($currentTime >= $startTime && $currentTime <= $endTime) {
                             echo "<div class='current-lesson'>$timeRange: $lessonDetails</div> <br>";
                         } else {
