@@ -54,6 +54,9 @@
 
     <!-- Schedule Container for Class Picker Schedule (visible on small screens) -->
     <div id="class-picker-schedule-container"></div>
+    <div id="clock">
+        <?php echo date("H:i"); ?>
+    </div>
 
     <script>
     const dayOfWeek = <?php echo $dayOfWeek; ?>;

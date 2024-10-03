@@ -158,3 +158,19 @@ body {
     margin: 10px 0;
   }
 }
+
+#clock {
+  position: absolute;
+  bottom: 5%;
+  font-size: 60px;
+  color: #fff;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
+}
+
+/* mobile screen remove clock */
+@media screen and (max-width: 768px) {
+  #clock {
+    display: none;
+  }
+}
