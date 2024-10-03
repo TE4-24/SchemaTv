@@ -1,8 +1,10 @@
 <?php
 date_default_timezone_set('Europe/Stockholm'); // Set the correct timezone
 
-$dayOfWeek = date("w") - 1; // Get the current day of the week (0 = Sunday)
-$currentTime = date("H:i"); // Get the current time in H:i format
+$dayOfWeek = isset($_GET['dayOfWeek']) ? intval($_GET['dayOfWeek']) : date("w") - 1;
+$currentTime = isset($_GET['currentTime']) ? $_GET['currentTime'] : date("H:i");
+
+$baseClasses = array("TE", "EE", "ES");
 
 function getClasses($baseClasses)
 {
@@ -24,9 +26,6 @@ function getClasses($baseClasses)
     return $classes; // Return the generated class names
 }
 
-$baseClasses = array("TE", "EE", "ES");
-$currentBaseClass = isset($_GET['currentBaseClass']) ? $_GET['currentBaseClass'] : $baseClasses[0]; // Default to the first base class if not set
-
 function displayDaySchedule($className, $day, $currentTime)
 {
     $output = "<div class='class-schema-container'>
@@ -36,12 +35,12 @@ function displayDaySchedule($className, $day, $currentTime)
     // Open the CSV file for the current class
     if (($csvHandle = fopen(getcwd() . "/admin/class_schedules/$className.csv", "r")) !== FALSE) {
         $currentDay = array();
-        
+
         // Read the CSV file
         while (($scheduleDays = fgetcsv($csvHandle, 1000, ",")) !== FALSE) {
             $currentDay[] = $scheduleDays[$day]; // Get the schedule for the specific day
         }
-        
+
         $counter = 0;
         foreach ($currentDay as $day) {
             if ($counter == 0) {
@@ -64,7 +63,7 @@ function displayDaySchedule($className, $day, $currentTime)
                         $output .= "<div class='greyed-out'>$timeRange: $lessonDetails</div><br>";
                     } elseif ($currentTime >= $startTime && $currentTime <= $endTime) {
                         $output .= "<div class='current-lesson'>$timeRange: $lessonDetails</div><br>";
-                    }else {
+                    } else {
                         $output .= "<div>$timeRange: $lessonDetails</div><br>";
                     }
                 }
@@ -82,11 +81,21 @@ function displayDaySchedule($className, $day, $currentTime)
     return $output; // Return the output string
 }
 
-// Get dynamically generated class names for the current base class
-$classes = getClasses([$currentBaseClass]);
+// Get the 'className' parameter from the GET request
+$classNameParam = isset($_GET['className']) ? $_GET['className'] : '';
+
+// Determine if the 'className' is a base class or a specific class
+if (in_array($classNameParam, $baseClasses)) {
+    // It's a base class, generate class names for the current base class
+    $classes = getClasses([$classNameParam]);
+} else {
+    // It's a specific class
+    $classes = [$classNameParam];
+}
+
 $output = "<div class='year-container'>";
 
-// Display the schedule for each generated class
+// Display the schedule for each class
 foreach ($classes as $className) {
     $output .= displayDaySchedule($className, $dayOfWeek, $currentTime);
 }

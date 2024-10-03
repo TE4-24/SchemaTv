@@ -16,7 +16,7 @@ class Schedule {
         $this->text_file = $data;
         $this->classes = $classes;
     }
-    
+
 
     public function get_classes() {
         $current_year = date("Y");
@@ -464,12 +464,12 @@ class Schedule {
                             $start_time = $lesson['start_time'];
                             $end_time = $lesson['end_time'];
                             $lesson_name = $lesson['lesson_name'];
-                            $lesson_name = str_replace("�", "ä", $lesson_name);
+                            $lesson_name = str_replace("\xEF\xBF\xBD", 'ä', $lesson_name);
                             $room = isset($lesson['room']) ? $lesson['room'] : null;
                             $time_range = $start_time . "-" . $end_time;
                             // Format the lesson string including room if available
                             if ($room) {
-                                $lesson_str = $time_range . ": " . $lesson_name . " (" . $room . ")";
+                                $lesson_str = $time_range . ": " . $lesson_name . " Sal:" . $room . "";
                             } else {
                                 $lesson_str = $time_range . ": " . $lesson_name;
                             }

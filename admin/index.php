@@ -12,11 +12,11 @@
 <body>
     <div class="mainContainer">
         <?php
-        ini_set('session.gc_maxlifetime', 10); // Set session max lifetime to 20 minutes (1200 seconds)
+        ini_set('session.gc_maxlifetime', 60); // Set session max lifetime to 20 minutes (1200 seconds)
         session_start();
 
         // Set the session timeout duration (in seconds)
-        $session_timeout = 10; // 20 minutes
+        $session_timeout = 60; // 20 minutes
 
         // Check if the session is set and if it has expired
         if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > $session_timeout)) {
@@ -38,18 +38,18 @@
         }
 
         if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-            echo "<form action='/admin' method='post'>";
+            echo "<form action='/admin/index.php' method='post'>";
             echo "<input type='password' name='password' placeholder='Enter Password'>";
             echo "<input type='submit' value='Login'>";
             echo "</form>";
         } else {
             echo "<div class='uploadContainer'>";
-            echo "<form action='/admin' method='post' enctype='multipart/form-data'>";
+            echo "<form action='/admin/index.php' method='post' enctype='multipart/form-data'>";
             echo "<input type='file' name='fileToUpload' id='fileToUpload' class='chooseFolder'>";
             echo "<input type='submit' value='Upload' name='submit'>";
             echo "</form>";
             echo "</div>";
-            
+
             if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["fileToUpload"])) {
                 if (!file_exists("uploads")) {
                     mkdir("uploads");
@@ -72,7 +72,7 @@
 
                         // include php converter in ../csv_converter.php
                         include '../csv_converter.php';
-                        
+
                     } else {
                         echo "Sorry, there was an error uploading your file.";
                     }
