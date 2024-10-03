@@ -6,6 +6,17 @@
     <link rel="stylesheet" type="text/css" href="style.css" />
     <link rel="shortcut icon" href="ntilogo.svg" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+    #clock {
+        position: absolute;
+        bottom: 5%;
+        font-size: 60px;
+        color: #fff;
+        font-family: "Courier New", Courier, monospace;
+        font-weight: bold;
+    }
+    </style>
 </head>
 
 <body>
