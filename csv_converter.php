@@ -464,6 +464,7 @@ class Schedule {
                             $start_time = $lesson['start_time'];
                             $end_time = $lesson['end_time'];
                             $lesson_name = $lesson['lesson_name'];
+                            $lesson_name = str_replace("�", "ä", $lesson_name);
                             $room = isset($lesson['room']) ? $lesson['room'] : null;
                             $time_range = $start_time . "-" . $end_time;
                             // Format the lesson string including room if available
