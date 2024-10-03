@@ -1,407 +1,556 @@
 <?php
 
-function getClassess($baseClasses)
-{
-  $currentYear = date("y"); // Get last two digits of the current year
-  $currentMonth = date("m");
+class Schedule {
+    public $text_file;
+    public $classes;
+    public $data;
+    public $schema;
+    public $all_lessons;
+    public $names;
+    public $df;
+    public $lessons;
+    public $schedule;
+    public $df_schedule; // Declare this property to avoid the deprecation warning
 
-  if ($currentMonth < 8) { // Before August, use the previous academic year
-    $currentYear -= 1;
-  }
-
-  $classes = array();
-  // Generate class names for the last 2 years and the current year
-  for ($i = $currentYear - 2; $i <= $currentYear; $i++) {
-    foreach ($baseClasses as $class) {
-      $classes[] = $class . sprintf("%02d", $i); // Format year as two digits
+    public function __construct($data, $classes) {
+        $this->text_file = $data;
+        $this->classes = $classes;
     }
-  }
+    
 
-  return $classes;
-}
+    public function get_classes() {
+        $current_year = date("Y");
+        $current_month = date("n"); // numeric representation of a month, without leading zeros (1 to 12)
 
-function getPupilsSSN()
-{
-    $baseClasses = ["TE", "EE", "ES"];
-    $classes = getClassess($baseClasses);
-    $pupils = [];
+        if ($current_month < 8) { // Before August, use the previous academic year
+            $current_year -= 1;
+        }
 
-    $schema = file_get_contents("./uploads/schema.txt");
-    $lines = explode("\n", $schema);
+        $current_year = substr($current_year, -2); // Get last two digits of the current year
 
-    foreach ($lines as $line) {
-        foreach ($classes as $cls) {
-            if (substr($line, 0, 4) === $cls) {
-                $ssns = array_slice(explode(",", $line), 1);
-                foreach ($ssns as $ssn) {
-                    $pupils[] = [$cls => $ssn];
-                }
+        $classes = array();
+
+        for ($i = $current_year - 2; $i <= $current_year; $i++) {
+            foreach ($this->classes as $cls) {
+                $classes[] = $cls . sprintf("%02d", $i); // Format year as two digits
             }
         }
+
+        // print_r($classes);
+        return $classes;
     }
 
-    return [$pupils, $lines];
-}
+    public function get_pupils_ssn() {
+        $pupils = array();
+        $schema_lines = array();
 
-function getAllLessons($pupils, $schema)
-{
-    $lessons = [];
+        // Regular expression to match 12-digit SSNs
+        $ssn_pattern = '/\b\d{12}\b/';
 
-    foreach ($pupils as $pupil) {
-        foreach ($pupil as $key => $value) {
-            $pupil_lessons = [];
+        //open /uploads/schema.txt
+        $file = fopen($this->text_file, "r");
 
-            foreach ($schema as $line) {
-                if (strpos($line, $value) !== false && $value !== explode("\t", $line)[0]) {
-                    $pupil_lessons[] = [$value => explode("\t", $line)[0]];
+        if ($file) {
+            while (($line = fgets($file)) !== false) {
+                $schema_lines[] = trim($line);
+                foreach ($this->classes as $cls) {
+                    if (strpos($line, $cls) === 0) {
+                        preg_match_all($ssn_pattern, $line, $matches);
+                        foreach ($matches[0] as $ssn) {
+                            $pupils[] = array($cls => $ssn);
+                        }
+                    }
                 }
             }
-
-            $lessons[] = [$key => $pupil_lessons];
+            fclose($file);
         }
+
+        return array($pupils, $schema_lines);
     }
 
-    return $lessons;
-}
+    public function get_all_lessons() {
+        $lessons = array();
 
-function getPupilNames($data)
-{
-    $names = [];
-    $track_row = 0;
-    $schema = file_get_contents("./uploads/schema.txt");
-    $lines = explode("\n", $schema);
-
-    foreach ($lines as $i => $line) {
-        if (strpos($line, "Student") !== false) {
-            $track_row = $i + 1;
-            break;
+        function is_ssn($s) {
+            $s = trim($s);
+            return ctype_digit($s) && strlen($s) == 12;
         }
+
+        // Exclude SSNs from schema_dict and strip whitespace
+        $schema_dict = array();
+        foreach ($this->schema as $line) {
+            $parts = explode("\t", $line);
+            $key = trim($parts[0]);
+            if (!is_ssn($key)) {
+                $schema_dict[$key] = trim($line);
+            }
+        }
+
+        foreach ($this->data as $pupil) {
+            foreach ($pupil as $cls => $ssn) {
+                $ssn = trim($ssn);
+                $pupil_lessons = array();
+                foreach ($schema_dict as $lesson_id => $lesson_line) {
+                    if (strpos($lesson_line, $ssn) !== false) {
+                        $lesson_name = trim(explode("\t", $lesson_line)[0]);
+                        $pupil_lessons[] = array($ssn => $lesson_name);
+                    }
+                }
+                $lessons[] = array($cls => $pupil_lessons);
+            }
+        }
+
+        return $lessons;
     }
 
-    foreach ($data as $pupil) {
-        foreach ($pupil as $cls => $value) {
-            foreach (array_slice($lines, $track_row) as $line) {
-                if (strpos($line, $value) !== false) {
-                    $x = array_filter(explode("\t", $line), function ($item) {
-                        return $item && strpos($item, "{") === false;
-                    });
+    public function get_pupil_names() {
+        $names = array();
+        $track_row = 0;
+        $i = 0;
 
-                    if (isset($x[3]) and isset($x[4])) {
-                        $name = $x[3] . " " . $x[4];
-                        $names[] = [$value => $name];
+        foreach ($this->schema as $line) {
+            if (strpos($line, "Student") !== false) {
+                $track_row = $i;
+                break;
+            }
+            $i++;
+        }
+
+        $schema_dict = array();
+        for ($j = $track_row - 1; $j < count($this->schema); $j++) {
+            $line = $this->schema[$j];
+            $parts = explode("\t", $line);
+            $key = trim($parts[0]);
+            $schema_dict[$key] = trim($line);
+        }
+
+        foreach ($this->data as $pupil) {
+            foreach ($pupil as $cls => $ssn) {
+                $ssn = trim($ssn);
+                if (isset($schema_dict[$ssn])) {
+                    $x = array();
+                    foreach (explode("\t", $schema_dict[$ssn]) as $item) {
+                        $item = trim($item);
+                        if ($item && strpos($item, "{") === false) {
+                            $x[] = $item;
+                        }
+                    }
+                    if (count($x) > 2) {
+                        $name = $x[1] . " " . $x[2];
+                        $names[] = array($ssn => $name);
                     }
                 }
             }
         }
+
+        return $names;
     }
 
-    return $names;
-}
+    public function convert_to_csv($filename="pupils_lessons.csv") {
+        $flattened_data = array();
 
-function convertToCSV($data, $names, $filename = "pupils_lessons.csv")
-{
-    $flattened_data = [];
+        foreach ($this->all_lessons as $lesson_dict) {
+            foreach ($lesson_dict as $cls => $pupil_lessons) {
+                foreach ($pupil_lessons as $lesson) {
+                    foreach ($lesson as $ssn => $lesson_name) {
+                        if ($cls == $lesson_name) {
+                            continue;
+                        }
+                        $name_to_append = "";
+                        foreach ($this->names as $name) {
+                            if (isset($name[$ssn])) {
+                                $name_to_append = $name[$ssn];
+                                break;
+                            }
+                        }
+                        $flattened_data[] = array(
+                            'kurs' => $cls,
+                            'personnummer' => $ssn,
+                            'lektion' => $lesson_name,
+                            'namn' => $name_to_append
+                        );
+                    }
+                }
+            }
+        }
 
-    foreach ($data as $lesson_dict) {
-        foreach ($lesson_dict as $cls => $pupil_lessons) {
-            foreach ($pupil_lessons as $lesson) {
-                foreach ($lesson as $ssn => $lesson_name) {
-                    if ($cls == $lesson_name)
-                        continue;
+        // Write to CSV file
+        $file = fopen($filename, 'w');
+        fputcsv($file, array('kurs', 'personnummer', 'lektion', 'namn'));
+        foreach ($flattened_data as $row) {
+            fputcsv($file, $row);
+        }
+        fclose($file);
 
-                    $name_to_append = "";
-                    foreach ($names as $name) {
-                        if (isset($name[$ssn])) {
-                            $name_to_append = $name[$ssn];
+        return $flattened_data;
+    }
+
+    public function add_minutes_to_time($old_time, $minutes_to_add) {
+        $old_time_split = explode(":", $old_time);
+        $old_time_minutes = intval($old_time_split[1]);
+        $old_time_hours = intval($old_time_split[0]);
+        $new_time_minutes = $old_time_minutes + intval($minutes_to_add);
+        $new_time_hours = $old_time_hours + intdiv($new_time_minutes, 60);
+        $new_time_minutes = $new_time_minutes % 60;
+        return sprintf("%02d:%02d", $new_time_hours, $new_time_minutes);
+    }
+
+    public function format_days_to_lessons($current_period) {
+        $days = array("ndag", "Tisdag", "Onsdag", "Torsdag", "Fredag");
+        $lessons = array(
+            "Måndag" => array(),
+            "Tisdag" => array(),
+            "Onsdag" => array(),
+            "Torsdag" => array(),
+            "Fredag" => array()
+        );
+
+        foreach ($this->schema as $line) {
+            $line = trim($line);
+            $line_data = explode("\t", $line);
+            foreach ($days as $day) {
+                if (strpos($line, $day) !== false) {
+                    foreach ($this->df as $row) {
+                        $lektion = $row['lektion'];
+                        if (preg_match('/\b' . preg_quote($lektion, '/') . '\b/', $line)) {
+                            if (in_array($current_period, $line_data) || (!in_array("P1", $line_data) && !in_array("P2", $line_data) && !in_array("P3", $line_data))) {
+                                $step = false;
+                                $old_time = "";
+                                for ($i = 0; $i < count($line_data); $i++) {
+                                    $x = $line_data[$i];
+                                    if ($step) {
+                                        $step = false;
+                                        foreach ($lessons as $key => &$value) {
+                                            if ($key == $day || ($key == "Måndag" && $day == "ndag")) {
+                                                if (strpos($old_time, ":") !== false) {
+                                                    $new_time = $this->add_minutes_to_time($old_time, $x);
+                                                    $value[count($value)-1][$lektion][] = $new_time;
+                                                }
+                                                $value[count($value)-1][$lektion][] = $x;
+                                                $room = isset($line_data[$i+5]) ? $line_data[$i+5] : '';
+                                                $value[count($value)-1][$lektion][] = $room;
+                                                continue 2;
+                                            }
+                                        }
+                                    }
+                                    if (strpos($x, ":") !== false) {
+                                        $step = true;
+                                        foreach ($lessons as $key => &$value) {
+                                            if ($key == $day || ($key == "Måndag" && $day == "ndag")) {
+                                                $value[] = array($lektion => array($x));
+                                                $old_time = $x;
+                                                continue 2;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                             break;
                         }
                     }
-
-                    $flattened_data[] = [
-                        'kurs' => $cls,
-                        'personnummer' => $ssn,
-                        'lektion' => $lesson_name,
-                        'namn' => $name_to_append
-                    ];
                 }
             }
         }
+
+        return $lessons;
     }
 
-    $file = fopen($filename, 'w');
-    fputcsv($file, ['kurs', 'personnummer', 'lektion', 'namn']);
+    public function convert_time_lessons_to_csv($output_filename) {
+        $flattened_data = array();
+        foreach ($this->lessons as $day => $day_lessons) {
+            foreach ($day_lessons as $lesson) {
+                foreach ($lesson as $lesson_name => $time_and_room) {
+                    $start_time = isset($time_and_room[0]) ? $time_and_room[0] : '';
+                    $end_time = isset($time_and_room[1]) ? $time_and_room[1] : '';
+                    $total_minutes = isset($time_and_room[2]) ? $time_and_room[2] : '';
+                    $room = isset($time_and_room[3]) ? $time_and_room[3] : '';
 
-    foreach ($flattened_data as $row) {
-        fputcsv($file, $row);
+                    $flattened_data[] = array(
+                        'lektion' => $lesson_name,
+                        'tid' => json_encode(array($start_time, $end_time, $total_minutes)),
+                        'dag' => $day,
+                        'rum' => $room
+                    );
+                }
+            }
+        }
+
+        // Write to CSV file
+        $file = fopen($output_filename, 'w');
+        fputcsv($file, array('lektion', 'tid', 'dag', 'rum'));
+        foreach ($flattened_data as $row) {
+            fputcsv($file, $row);
+        }
+        fclose($file);
+
+        return $flattened_data;
     }
 
-    fclose($file);
+    public function create_combined_schedule() {
+        $days = array("Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag");
+        $df = array();
+        if (($handle = fopen("lessons.csv", "r")) !== FALSE) {
+            $header = fgetcsv($handle);
+            while (($data = fgetcsv($handle)) !== FALSE) {
+                $df[] = array_combine($header, $data);
+            }
+            fclose($handle);
+        }
 
-    return $flattened_data;
-}
-
-function formatDaysToLessons($data, $df)
-{
-    $days = ["ndag", "Tisdag", "Onsdag", "Torsdag", "Fredag"];
-    $lessons = [
-        "Måndag" => [],
-        "Tisdag" => [],
-        "Onsdag" => [],
-        "Torsdag" => [],
-        "Fredag" => []
-    ];
-
-    foreach ($data as $line) {
+        $schedule = array();
         foreach ($days as $day) {
-            if (strpos($line, $day) !== false) {
-                foreach ($df as $row) {
-                    $lektion = $row['lektion'];
-                    if (preg_match("/\b" . preg_quote($lektion, '/') . "\b/", $line)) {
-                        $line_data = explode("\t", $line);
-                        $p2 = in_array("P2", $line_data);
+            $schedule[$day] = array();
+        }
 
-                        if (!$p2) {
-                            $step = false;
-                            $old_time = "";
+        foreach ($df as $row) {
+            $lesson_name = $row['lektion'];
+            $time_info_str = $row['tid'];
+            $day = $row['dag'];
+            $room = isset($row['rum']) ? $row['rum'] : '';
 
-                            foreach ($line_data as $x) {
-                                if ($step) {
-                                    $step = false;
-                                    $new_time = calculateNewTime($old_time, $x);
-                                    $lessons[$day][] = [$lektion => [$old_time, $new_time]];
-                                    continue;
-                                }
+            $time_info = json_decode($time_info_str, true);
+            if (count($time_info) == 3) {
+                $start_time = strtotime($time_info[0]);
+                $end_time = $time_info[1];
+                $schedule[$day][] = array($start_time, $end_time, $lesson_name, $room);
+            } else {
+                echo "Unexpected time format in line: " . json_encode($row) . "\n";
+            }
+        }
 
-                                if (strpos($x, ":") !== false) {
-                                    $step = true;
-                                    $old_time = $x;
-                                    $lessons[$day][] = [$lektion => [$x]];
-                                }
-                            }
-                        }
-                        break;
+        // Sort lessons by start time for each day
+        foreach ($schedule as $day => &$lessons) {
+            usort($lessons, function($a, $b) {
+                return $a[0] - $b[0];
+            });
+        }
+
+        // Determine maximum number of lessons in any day
+        $max_rows = 0;
+        foreach ($schedule as $day => $lessons) {
+            $max_rows = max($max_rows, count($lessons));
+        }
+
+        // Create dataframe schedule
+        $df_schedule = array();
+        for ($i = 0; $i < $max_rows; $i++) {
+            $row = array();
+            foreach ($days as $day) {
+                if (isset($schedule[$day][$i])) {
+                    $start_time_str = date('H:i', $schedule[$day][$i][0]);
+                    $lesson_str = $schedule[$day][$i][2] . " (" . $start_time_str . "-" . $schedule[$day][$i][1];
+                    if ($schedule[$day][$i][3] != '') {
+                        $lesson_str .= "," . $schedule[$day][$i][3];
                     }
+                    $lesson_str .= ")";
+                    $row[$day] = $lesson_str;
+                } else {
+                    $row[$day] = '';
                 }
             }
-        }
-    }
-
-    return $lessons;
-}
-
-function calculateNewTime($old_time, $x)
-{
-    list($hours, $minutes) = explode(":", $old_time);
-    $new_minutes = intval($minutes) + intval($x);
-
-    $new_hours = intval($hours) + intdiv($new_minutes, 60);
-    $new_minutes = $new_minutes % 60;
-
-    return sprintf('%02d:%02d', $new_hours, $new_minutes);
-}
-
-function convertTimeLessonsToCSV($data, $output_filename)
-{
-    $flattened_data = [];
-
-    foreach ($data as $day => $lessons) {
-        foreach ($lessons as $lesson) {
-            foreach ($lesson as $lesson_name => $time) {
-                if ($time[1] ?? "") {
-                    if ($day == "ndag") {
-                        $day = "Måndag";
-                    }
-                    $flattened_data[] = [
-                        'lektion' => $lesson_name,
-                        'tid' => implode(",", $time),
-                        'dag' => $day
-                    ];
-                }
-            }
-        }
-    }
-
-    $file = fopen($output_filename, 'w');
-    fputcsv($file, ['lektion', 'tid', 'dag']);
-
-    foreach ($flattened_data as $row) {
-        fputcsv($file, $row);
-    }
-
-    fclose($file);
-
-    return $flattened_data;
-}
-
-function createCombinedSchedule()
-{
-    $days = ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag"];
-    $df = array_map('str_getcsv', file('lessons.csv'));
-
-    // Skip the header row
-    $header = array_shift($df);
-
-    $schedule = [];
-    foreach ($days as $day) {
-        $schedule[$day] = [];
-    }
-
-    foreach ($df as $row) {
-        // Check if the row has at least 3 columns to avoid undefined index errors
-        if (count($row) < 3) {
-            echo "Malformed CSV row: " . implode(",", $row) . "\n";
-            continue;  // Skip this iteration if the row is malformed
-        }
-
-        $lesson_name = $row[0];
-        $time_info_str = $row[1];
-        $day = $row[2];
-
-        // Check if time_info_str is not null or empty
-        if ($time_info_str === null || trim($time_info_str) === '') {
-            echo "Empty or invalid time_info_str: " . $time_info_str . "\n";
-            continue;  // Skip this iteration if time_info_str is invalid
-        }
-
-        // Split the time string by comma
-        $time_info = explode(",", $time_info_str);
-
-        // Check if we have exactly two time entries (start and end)
-        if (count($time_info) == 2) {
-            $start_time = strtotime($time_info[0]); // Convert start time to timestamp
-            $end_time = $time_info[1]; // End time remains as string
-
-            // Add to schedule
-            $schedule[$day][] = [$start_time, $end_time, $lesson_name];
-        } else {
-            echo "Unexpected time format in line: " . implode(",", $row) . "\n";
-        }
-    }
-
-    // Sort the lessons by start time for each day
-    foreach ($schedule as $day => &$lessons) {
-        usort($lessons, function ($a, $b) {
-            return $a[0] <=> $b[0];
-        });
-    }
-
-    // Determine the maximum number of lessons in any day
-    $max_rows = 0;
-    foreach ($schedule as $day => $lessons) {
-        $max_rows = max($max_rows, count($lessons));
-    }
-
-    // Create an empty schedule array with placeholders
-    $df_schedule = array_fill(0, $max_rows, array_fill_keys($days, ''));
-
-    // Fill the schedule with lessons
-    foreach ($schedule as $day => $lessons) {
-        foreach ($lessons as $i => $lesson) {
-            $start_time_str = date('H:i', $lesson[0]);
-            $df_schedule[$i][$day] = $lesson[2] . " (" . $start_time_str . "-" . $lesson[1] . ")";
-        }
-    }
-
-    // Create output folder if it doesn't exist
-    $output_folder = "combined_schedule";
-    if (!file_exists($output_folder)) {
-        mkdir($output_folder, 0777, true);
-    }
-
-    // Write the schedule to a CSV file
-    $file = fopen($output_folder . "/schedule.csv", 'w');
-    fputcsv($file, $days);
-    foreach ($df_schedule as $row) {
-        fputcsv($file, $row);
-    }
-    fclose($file);
-
-    return $df_schedule;
-}
-
-function createClassScheduleFromCombinedSchedule($df_schedule)
-{
-    $class_data = [];
-    $days_of_week = ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag"];
-
-    // Read pupil lessons data from CSV
-    $pupil_lessons_df = array_map('str_getcsv', file('pupils_lessons.csv'));
-
-    // Process each row of the combined schedule
-    foreach ($df_schedule as $row) {
-        foreach ($days_of_week as $day) {
-            if (isset($row[$day])) {
-                $lesson = $row[$day];
-                if (empty($lesson)) {
-                    continue;
-                }
-
-                list($lesson_name, $lesson_time) = explode(" (", rtrim($lesson, ")"));
-
-                foreach ($pupil_lessons_df as $pupil_row) {
-                    $lesson_name_cleaned = preg_replace('/\s+\(.*\)/', '', $lesson_name);
-                    if (preg_match("/\b" . preg_quote($lesson_name_cleaned, '/') . "\b/", $pupil_row[2])) {
-                        $kurs = $pupil_row[0];
-                
-                        if (!isset($class_data[$kurs])) {
-                            $class_data[$kurs] = array_fill_keys($days_of_week, []);
-                        }
-                
-                        // Check if this lesson is already added to avoid duplicates
-                        if (!in_array($lesson_time . ": " . $lesson_name, $class_data[$kurs][$day])) {
-                            $class_data[$kurs][$day][] = $lesson_time . ": " . $lesson_name;
-                        }
-                    }
-                }
-                
-            }
-        }
-    }
-
-    // Create output folder if it doesn't exist
-    $output_folder = "class_schedules";
-    if (!file_exists($output_folder)) {
-        mkdir($output_folder, 0777, true);
-    }
-
-    // Write each class's schedule to a separate CSV file
-    foreach ($class_data as $kurs => $days) {
-        // Determine the maximum number of lessons in any day to format the CSV correctly
-        $max_lessons = max(array_map('count', $days));
-
-        // Prepare the CSV rows
-        $csv_rows = [];
-        for ($i = 0; $i < $max_lessons; $i++) {
-            $row = [];
-            foreach ($days_of_week as $day) {
-                // If there are more lessons for the day, add it, otherwise add an empty string
-                $row[] = isset($days[$day][$i]) ? $days[$day][$i] : '';
-            }
-            $csv_rows[] = $row;
+            $df_schedule[] = $row;
         }
 
         // Write to CSV
-        $file_path = $output_folder . '/' . $kurs . '.csv';
-        $file = fopen($file_path, 'w');
-        fputcsv($file, $days_of_week); // Header row
-        foreach ($csv_rows as $csv_row) {
-            fputcsv($file, $csv_row);
+        $output_folder = "combined_schedule";
+        if (!file_exists($output_folder)) {
+            mkdir($output_folder, 0777, true);
+        }
+        $file = fopen($output_folder . "/schedule.csv", 'w');
+        fputcsv($file, $days);
+        foreach ($df_schedule as $row) {
+            $line = array();
+            foreach ($days as $day) {
+                $line[] = $row[$day];
+            }
+            fputcsv($file, $line);
         }
         fclose($file);
+
+        return $df_schedule;
     }
+
+    public function create_class_schedule_from_combined_schedule($df_schedule) {
+        $schedule = array();
+        $pupil_lessons_df = array();
+        if (($handle = fopen("pupils_lessons.csv", "r")) !== FALSE) {
+            $header = fgetcsv($handle);
+            while (($data = fgetcsv($handle)) !== FALSE) {
+                $pupil_lessons_df[] = array_combine($header, $data);
+            }
+            fclose($handle);
+        }
+
+        // Adjusted regular expression to handle optional room
+        $lesson_pattern = '/^(.*?) \(([^-]+)-([^\),]+)(?:,([^)]+))?\)$/';
+
+        foreach ($df_schedule as $row) {
+            foreach ($row as $day => $lesson) {
+                if ($lesson != '') {
+                    if (preg_match($lesson_pattern, $lesson, $matches)) {
+                        $lesson_name = trim($matches[1]);
+                        $start_time = trim($matches[2]);
+                        $end_time = trim($matches[3]);
+                        $room = isset($matches[4]) ? trim($matches[4]) : null;
+
+                        // Get the list of courses (kurs) associated with the lesson
+                        $kurs_list = array();
+                        foreach ($pupil_lessons_df as $pl_row) {
+                            if ($pl_row['lektion'] == $lesson_name) {
+                                $kurs_list[] = $pl_row['kurs'];
+                            }
+                        }
+                        $kurs_list = array_unique($kurs_list);
+
+                        foreach ($kurs_list as $kurs) {
+                            if (!isset($schedule[$day])) {
+                                $schedule[$day] = array();
+                            }
+                            // Find existing class_dict or create a new one
+                            $class_dict = null;
+                            foreach ($schedule[$day] as &$item) {
+                                if (isset($item[$kurs])) {
+                                    $class_dict = &$item;
+                                    break;
+                                }
+                            }
+                            if ($class_dict === null) {
+                                $class_dict = array($kurs => array());
+                                $schedule[$day][] = &$class_dict;
+                            }
+                            // Build lesson info
+                            $lesson_info = array(
+                                'start_time' => $start_time,
+                                'end_time' => $end_time,
+                                'lesson_name' => $lesson_name
+                            );
+                            if ($room) {
+                                $lesson_info['room'] = $room;
+                            }
+                            $class_dict[$kurs][] = $lesson_info;
+                            unset($class_dict); // unset reference
+                        }
+                    } else {
+                        continue; // Skip if the lesson string doesn't match the expected format
+                    }
+                }
+            }
+        }
+
+        return $schedule;
+    }
+
+    public function create_csv_for_each_class($schedule) {
+        $class_data = array();
+        $days_of_week = array("Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag");
+
+        function convert_time_to_minutes($time_str) {
+            list($hour, $minute) = explode(':', $time_str);
+            return intval($hour) * 60 + intval($minute);
+        }
+
+        foreach ($days_of_week as $day) {
+            if (isset($schedule[$day])) {
+                $classes = $schedule[$day];
+                foreach ($classes as $class_dict) {
+                    foreach ($class_dict as $kurs => $lessons) {
+                        if (!isset($class_data[$kurs])) {
+                            $class_data[$kurs] = array();
+                            foreach ($days_of_week as $d) {
+                                $class_data[$kurs][$d] = array();
+                            }
+                        }
+                        foreach ($lessons as $lesson) {
+                            $start_time = $lesson['start_time'];
+                            $end_time = $lesson['end_time'];
+                            $lesson_name = $lesson['lesson_name'];
+                            $room = isset($lesson['room']) ? $lesson['room'] : null;
+                            $time_range = $start_time . "-" . $end_time;
+                            // Format the lesson string including room if available
+                            if ($room) {
+                                $lesson_str = $time_range . ": " . $lesson_name . " (" . $room . ")";
+                            } else {
+                                $lesson_str = $time_range . ": " . $lesson_name;
+                            }
+                            $class_data[$kurs][$day][] = array(
+                                'start_minutes' => convert_time_to_minutes($start_time),
+                                'lesson_str' => $lesson_str
+                            );
+                        }
+                    }
+                }
+            }
+        }
+
+        // Sort lessons by start time for each day and class
+        foreach ($class_data as $kurs => &$days) {
+            foreach ($days_of_week as $day) {
+                usort($days[$day], function($a, $b) {
+                    return $a['start_minutes'] - $b['start_minutes'];
+                });
+                // Replace the list of dicts with list of lesson strings
+                $lessons = array();
+                foreach ($days[$day] as $item) {
+                    $lessons[] = $item['lesson_str'];
+                }
+                $days[$day] = $lessons;
+            }
+        }
+
+        // Write CSV files for each class
+        $output_folder = "class_schedules";
+        if (!file_exists($output_folder)) {
+            mkdir($output_folder, 0777, true);
+        }
+
+        foreach ($class_data as $kurs => $data) {
+            $max_lessons = 0;
+            foreach ($data as $lessons) {
+                $max_lessons = max($max_lessons, count($lessons));
+            }
+
+            $csv_data = array();
+            for ($i = 0; $i < $max_lessons; $i++) {
+                $row = array();
+                foreach ($days_of_week as $day) {
+                    if (isset($data[$day][$i])) {
+                        $row[$day] = $data[$day][$i];
+                    } else {
+                        $row[$day] = '';
+                    }
+                }
+                $csv_data[] = $row;
+            }
+
+            // Write to CSV
+            $file = fopen($output_folder . '/' . $kurs . '.csv', 'w');
+            fputcsv($file, $days_of_week);
+            foreach ($csv_data as $row) {
+                $line = array();
+                foreach ($days_of_week as $day) {
+                    $line[] = $row[$day];
+                }
+                fputcsv($file, $line);
+            }
+            fclose($file);
+            echo "Class schedule saved for: " . $kurs . "\n";
+        }
+    }
+
 }
 
-
-function main()
-{
-    list($pupils, $schema) = getPupilsSSN();
-    $lessons = getAllLessons($pupils, $schema);
-    $names = getPupilNames($pupils);
-    $pupils_lessons_df = convertToCSV($lessons, $names);
-    $days_to_lessons = formatDaysToLessons($schema, $pupils_lessons_df);
-    convertTimeLessonsToCSV($days_to_lessons, "lessons.csv");
-    $combined_schedule_df = createCombinedSchedule();
-    createClassScheduleFromCombinedSchedule($combined_schedule_df);
+function main() {
+    $schedule = new Schedule("uploads/schema.txt", array("TE", "EE", "ES"));
+    $schedule->classes = $schedule->get_classes();
+    list($schedule->data, $schedule->schema) = $schedule->get_pupils_ssn();
+    $schedule->all_lessons = $schedule->get_all_lessons();
+    $schedule->names = $schedule->get_pupil_names();
+    $schedule->df = $schedule->convert_to_csv("pupils_lessons.csv");
+    $schedule->lessons = $schedule->format_days_to_lessons("P1");
+    $schedule->convert_time_lessons_to_csv("lessons.csv");
+    $schedule->df_schedule = $schedule->create_combined_schedule();
+    $schedule->schedule = $schedule->create_class_schedule_from_combined_schedule($schedule->df_schedule);
+    $schedule->create_csv_for_each_class($schedule->schedule);
 }
 
 main();

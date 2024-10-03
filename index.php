@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -7,90 +8,118 @@
 
 <body>
     <?php
-  $dayOfWeek = date("w") - 1;
-   function getClasses($baseClasses)
-   {
-     $currentYear = date("y"); // Get last two digits of the current year
-     $currentMonth = date("m");
- 
-     if ($currentMonth < 8) { // Before August, use the previous academic year
-       $currentYear -= 1;
-     }
- 
-     $classes = array();
-     // Generate class names for the last 2 years and the current year
-     for ($i = $currentYear - 2; $i <= $currentYear; $i++) {
-       foreach ($baseClasses as $class) {
-         $classes[] = $class . sprintf("%02d", $i); // Format year as two digits
-       }
-     }
- 
-     return $classes;
-   }
+    date_default_timezone_set('Europe/Stockholm');
+    $dayOfWeek = date("w") - 1;
+    $currentTime = date("H:i");
 
-  $baseClasses = array("TE", "EE", "ES");
+    function getClasses($baseClasses)
+    {
+        $currentYear = date("y");
+        $currentMonth = date("m");
 
-  if (isset($_GET['currentBaseClass'])) { //GET is used to get data from a specified resource (URL) and the data is visible to everyone in the URL bar. 
-    $currentBaseClass = $_GET['currentBaseClass']; // Get the current base class from the URL 
-  } else {
-    $currentBaseClass = $baseClasses[0]; // Default to the first base class if not set 
-  }
-
-  $currentIndex = array_search($currentBaseClass, $baseClasses); // Get the index of the current base class 
-
-  $nextBaseClass = $baseClasses[($currentIndex + 1) % count($baseClasses)];
-
-  header("Refresh: null; url=?currentBaseClass=$nextBaseClass");
-
-  function displayDaySchedule($className, $day)
-  {
-    echo "<div class='class-schema-container'>
-        <div class='$className'><h1 class='klassNamn'>$className</h1></div>
-        <div class='schema'>";
-
-    // Open the CSV file
-    // if (($csvHandle = fopen("admin/class_schedules/$className.csv", "r")) !== FALSE) {
-    if (($csvHandle = fopen(getcwd() . "/admin/class_schedules/$className.csv", "r")) !== FALSE) {
-      $currentDay = array();
-      while (($scheduleDays = fgetcsv($csvHandle, 1000, ",")) !== FALSE) {
-        $currentDay[] = $scheduleDays[$day];
-      }
-
-      foreach ($currentDay as $day) {
-        if ($day == "") {
-          continue;
-        } else {
-          echo "<div>$day</div> <br>";
+        if ($currentMonth < 8) {
+            $currentYear -= 1;
         }
-      }
 
-      fclose($csvHandle);
-    } else {
-      echo "Unable to open the CSV file.";
+        $classes = array();
+        for ($i = $currentYear - 2; $i <= $currentYear; $i++) {
+            foreach ($baseClasses as $class) {
+                $classes[] = $class . sprintf("%02d", $i);
+            }
+        }
+
+        return $classes;
     }
 
-    echo "</div>
-      </div>";
-  }
-  
-  // Display the header
-  // echo "<div class='header'><a href='/admin'>Schema for $currentBaseClass</a></div>";
+    $baseClasses = array("TE", "EE", "ES");
+    $currentBaseClass = isset($_GET['currentBaseClass']) ? $_GET['currentBaseClass'] : $baseClasses[0];
 
-  // Get dynamically generated class names for the current base class
-  $classes = getClasses([$currentBaseClass]);
+    function displayDaySchedule($className, $day, $currentTime)
+    {
+        echo "<div class='class-schema-container'>
+            <div class='$className'><h1 class='klassNamn'>$className</h1></div>
+            <div class='schema'>";
 
-  // Start the container for the class schedules
-  echo "<div class='year-container'>";
+        if (($csvHandle = fopen(getcwd() . "/admin/class_schedules/$className.csv", "r")) !== FALSE) {
+            $currentDay = array();
+            while (($scheduleDays = fgetcsv($csvHandle, 1000, ",")) !== FALSE) {
+                $currentDay[] = $scheduleDays[$day];
+            }
+            
+            $counter = 0;
+            foreach ($currentDay as $day) {
+                if ($counter == 0) {
+                    $counter++;
+                    continue;
+                }
+                if ($day == "") {
+                    continue;
+                } else {
+                    $parts = explode(": ", $day);
+                    if (isset($parts[0])) {
+                        $timeRange = $parts[0];
+                        $lessonDetails = isset($parts[1]) ? $parts[1] : '';
+                        list($startTime, $endTime) = explode("-", $timeRange);
 
-  // Display the schedule for each generated class
-  foreach ($classes as $className) {
-    displayDaySchedule($className, $dayOfWeek);
-  }
+                        if ($currentTime > $endTime) {
+                            echo "<div class='greyed-out'>$timeRange: $lessonDetails</div> <br>";
+                        } elseif ($currentTime >= $startTime && $currentTime <= $endTime) {
+                            echo "<div class='current-lesson'>$timeRange: $lessonDetails</div> <br>";
+                        } else {
+                            echo "<div>$timeRange: $lessonDetails</div> <br>";
+                        }
+                    }
+                }
+                $counter++;
+            }
 
+            fclose($csvHandle);
+        } else {
+            echo "Unable to open the CSV file.";
+        }
 
-  // End the container
-  echo "</div>";
-  ?>
+        echo "</div>
+          </div>";
+    }
+
+    $classes = getClasses([$currentBaseClass]);
+    echo "<div id='schedule-container'>"; // Correct ID here
+    echo "<div class='year-container'>";
+
+    foreach ($classes as $className) {
+        displayDaySchedule($className, $dayOfWeek, $currentTime);
+    }
+
+    echo "</div>";
+    echo "</div>";
+    ?>
+    <script>
+    let currentBaseClassIndex = 0; // Start with the first base class (TE)
+    const baseClasses = ["TE", "EE", "ES"]; // Base classes to cycle through
+
+    function fetchSchedule() {
+        const currentBaseClass = baseClasses[currentBaseClassIndex];
+        fetch(`fetch_schedule.php?currentBaseClass=${currentBaseClass}`)
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('schedule-container').innerHTML = data; // Correct ID usage
+            })
+            .catch(error => console.error('Error fetching schedule:', error));
+    }
+
+    function rotateClasses() {
+        currentBaseClassIndex = (currentBaseClassIndex + 1) % baseClasses.length; // Cycle through classes
+        fetchSchedule(); // Fetch the new schedule for the current class
+    }
+
+    // Initial fetch when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchSchedule(); // Load the initial schedule
+
+        // Set an interval to rotate classes every 10 seconds (adjust as necessary)
+        setInterval(rotateClasses, 7000); // Change class every 10 seconds
+    });
+    </script>
 
 </body>
 

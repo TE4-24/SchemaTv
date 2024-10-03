@@ -72,6 +72,7 @@
 
                         // include php converter in ../csv_converter.php
                         include '../csv_converter.php';
+                        
                     } else {
                         echo "Sorry, there was an error uploading your file.";
                     }
