@@ -4,6 +4,7 @@
 <head>
     <title>Dynamic Schedule</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="shortcut icon" href="ntilogo.svg" type="image/x-icon">
 </head>
 
 <body>
@@ -99,12 +100,30 @@
 
     function fetchSchedule() {
         const currentBaseClass = baseClasses[currentBaseClassIndex];
-        fetch(`fetch_schedule.php?currentBaseClass=${currentBaseClass}`)
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('schedule-container').innerHTML = data; // Correct ID usage
-            })
-            .catch(error => console.error('Error fetching schedule:', error));
+        const scheduleContainer = document.getElementById('schedule-container');
+
+        // Apply fade-out animation to the current schedule
+        scheduleContainer.classList.add('fade-out');
+
+        // Wait for the fade-out animation to complete before fetching the new schedule
+        setTimeout(() => {
+            fetch(`fetch_schedule.php?currentBaseClass=${currentBaseClass}`)
+                .then(response => response.text())
+                .then(data => {
+                    // Replace the old content with the new schedule
+                    scheduleContainer.innerHTML = data;
+
+                    // Remove fade-out and apply fade-in
+                    scheduleContainer.classList.remove('fade-out');
+                    scheduleContainer.classList.add('fade-in');
+
+                    // Remove the fade-in class after the animation is complete
+                    setTimeout(() => {
+                        scheduleContainer.classList.remove('fade-in');
+                    }, 500); // Duration of the fade-in animation
+                })
+                .catch(error => console.error('Error fetching schedule:', error));
+        }, 500); // Delay for the fade-out animation to complete
     }
 
     function rotateClasses() {
@@ -116,8 +135,8 @@
     document.addEventListener('DOMContentLoaded', () => {
         fetchSchedule(); // Load the initial schedule
 
-        // Set an interval to rotate classes every 10 seconds (adjust as necessary)
-        setInterval(rotateClasses, 7000); // Change class every 10 seconds
+        // Set an interval to rotate classes every 7 seconds
+        setInterval(rotateClasses, 7000); // Change class every 7 seconds
     });
     </script>
 

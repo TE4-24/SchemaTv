@@ -22,45 +22,37 @@ body {
   overflow: auto;
 }
 
-/* Header Styling with Neon-Like Text Effect */
-
-/*
-.header {
-  color: #ffdfdf;
-  text-shadow: 0 0 15px rgba(255, 255, 255, 0.7), 0 0 20px #ff99ff,
-    0 0 30px #ff66cc, 0 0 40px #ff33cc;
-  text-align: center;
-  font-size: 36px;
-   padding: 20px;
-  font-weight: bolder;
-  animation: pulse 2s infinite ease-in-out;
-}
-
-.header>a {
-  text-decoration: none;
-  color: #ffdfdf;
-}
-*/
-
-/* Pulsing Animation for the Header */
-@keyframes pulse {
-  0% {
-    text-shadow: 0 0 10px #ff33cc, 0 0 20px #ff66cc, 0 0 30px #ff99ff;
-  }
-
-  100% {
-    text-shadow: 0 0 25px #ff33cc, 0 0 35px #ff66cc, 0 0 50px #ff99ff;
-  }
-}
 
 .year-container {
-  /* max-width: 1200px; */
-  /* margin: 30px auto; */
   display: flex;
   justify-content: space-around;
-  /* align-items: flex-start; */
-  /* align-items: center; */
   padding: 0;
+}
+
+.fade-out {
+  animation: fadeOut 0.5s forwards;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* when screen less 768 px flex col for year-container */
@@ -75,8 +67,6 @@ body {
   margin: 10px 10px;
   padding: 15px;
   border-radius: 20px;
-  /* border: 2px solid #EBEBEB; */
-  /* box-shadow: 0 0 20px rgba(255, 102, 204, 0.5); */
   background: rgb(51, 51, 51, 0.5);
   position: relative;
   overflow: hidden;
@@ -98,19 +88,6 @@ body {
   animation: bounce 1.5s infinite ease-in-out;
 }
 
-/* @keyframes bounce {
-  
-0%,
-100% {
-  transform: translateY(0);
-  }
-  
-  50% {
-    transform: translateY(-10px);
-    }
-    } */
-
-/* Schema Styling */
 .schema {
   position: relative;
   display: flex;
@@ -154,19 +131,3 @@ body {
   background: linear-gradient(120deg, #ff66cc, #ff99ff) !important;
 }
 
-/* Media Query for Responsive Styling
-@media (max-width: 768px) {
-  .year-container {
-    flex-direction: column;
-  }
-
-  .class-schema-container {
-    margin-bottom: 20px;
-    height: auto;
-  }
-
-  .schema>div {
-    flex-direction: column;
-    text-align: center;
-  }
-} */
