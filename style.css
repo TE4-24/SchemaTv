@@ -130,18 +130,22 @@ body {
 .picker-container {
   margin: 20px;
   text-align: center;
+  display: flex;
 }
 
 .picker-container label {
-  font-size: 24px;
+  font-size: 36px;
   color: #fff;
   margin-right: 10px;
 }
 
 .picker-container select {
-  font-size: 24px;
+  font-size: 36px;
   padding: 5px 10px;
   border-radius: 5px;
+  border: none;
+  color: white;
+  background-color: #e774bd;
 }
 
 /* Adjust schedule container for mobile */

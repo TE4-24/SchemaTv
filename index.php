@@ -66,7 +66,6 @@
     <!-- Schedule Container for Class Picker Schedule (visible on small screens) -->
     <div id="class-picker-schedule-container"></div>
     <div id="clock">
-        <?php echo date("H:i"); ?>
     </div>
 
     <script>
@@ -138,7 +137,7 @@
             fetchSchedule(); // Load the initial schedule
 
             // Set an interval to rotate classes every 7 seconds
-            setInterval(rotateClasses, 7000); // Change class every 7 seconds
+            setInterval(rotateClasses, 10000); // Change class every 7 seconds
         }
 
         function initClassPickerSchedule() {
@@ -176,8 +175,28 @@
             });
         }
 
-        // Initial setup
+        //hours and minutes in european format
+        function updateTime() {
+            let time = new Date().toLocaleTimeString('en-GB', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('clock').innerHTML = time;
+        }
+
         setupSchedule();
+        updateTime();
+
+        // Initial setup
+        const timer = setInterval(() => {
+            setupSchedule();
+            updateTime();
+
+        }, 1000 * 60);
+
+        window.addEventListener('beforeunload', () => {
+            clearInterval(timer);
+        });
 
         // Listen for window resize to adjust behavior
         window.addEventListener('resize', () => {
