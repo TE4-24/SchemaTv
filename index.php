@@ -136,8 +136,8 @@
             // Initial fetch when the page loads
             fetchSchedule(); // Load the initial schedule
 
-            // Set an interval to rotate classes every 7 seconds
-            setInterval(rotateClasses, 10000); // Change class every 7 seconds
+            // Rotate classes every 10 seconds
+            setInterval(rotateClasses, 1000 * 10);
         }
 
         function initClassPickerSchedule() {
@@ -189,9 +189,7 @@
 
         // Initial setup
         const timer = setInterval(() => {
-            setupSchedule();
-            updateTime();
-
+            location.reload();
         }, 1000 * 60);
 
         window.addEventListener('beforeunload', () => {
@@ -200,7 +198,6 @@
 
         // Listen for window resize to adjust behavior
         window.addEventListener('resize', () => {
-            // Reload the page to re-initialize based on new screen size
             location.reload();
         });
     });

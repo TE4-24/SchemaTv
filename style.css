@@ -104,6 +104,11 @@ body {
   color: #ebebeb;
   border-bottom: 2px solid;
   border-color: #ebebeb !important;
+  margin-top: -25px;
+}
+
+.schema > div:first-child {
+  margin-top: 15px;
 }
 
 /* Time and Class Name Inside Each Time Slot */
