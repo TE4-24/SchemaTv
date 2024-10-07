@@ -465,6 +465,10 @@ class Schedule {
                             $end_time = $lesson['end_time'];
                             $lesson_name = $lesson['lesson_name'];
                             $lesson_name = str_replace("\xEF\xBF\xBD", 'ä', $lesson_name);
+                            // if any of these are in the string then delte it from the string [EE], [TE], [ES]
+                            $lesson_name = preg_replace('/\s\w{2}\d{2}\/\w{2}\d{2}|\s\w{2}\d{2}/', '', $lesson_name);
+                            $lesson_name = explode("/", $lesson_name)[0];
+                            
                             $room = isset($lesson['room']) ? $lesson['room'] : null;
                             $time_range = $start_time . "-" . $end_time;
                             // Format the lesson string including room if available

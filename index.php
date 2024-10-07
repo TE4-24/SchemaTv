@@ -125,7 +125,9 @@
                         })
                         .catch(error => console.error('Error fetching schedule:', error));
                 }, 500); // Delay for the fade-out animation to complete
+
             }
+
 
             function rotateClasses() {
                 currentBaseClassIndex = (currentBaseClassIndex + 1) % baseClasses
