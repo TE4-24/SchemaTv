@@ -40,6 +40,7 @@ body {
   from {
     opacity: 1;
   }
+
   to {
     opacity: 0;
   }
@@ -49,6 +50,7 @@ body {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -95,7 +97,7 @@ body {
 }
 
 /* Individual Time Slot in Schedule */
-.schema > div {
+.schema>div {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -104,20 +106,20 @@ body {
   color: #ebebeb;
   border-bottom: 2px solid;
   border-color: #ebebeb !important;
-  margin-top: -25px;
+  margin-top: -10px;
 }
 
-.schema > div:first-child {
+.schema>div:first-child {
   margin-top: 15px;
 }
 
 /* Time and Class Name Inside Each Time Slot */
-.schema > div .time {
+.schema>div .time {
   font-size: 30px;
   font-weight: bold;
 }
 
-.schema > div .className {
+.schema>div .className {
   font-size: 30px;
   font-weight: 700;
 }
