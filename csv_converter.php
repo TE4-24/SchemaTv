@@ -265,6 +265,8 @@ class Schedule {
                     $total_minutes = isset($time_and_room[2]) ? $time_and_room[2] : '';
                     $room = isset($time_and_room[3]) ? $time_and_room[3] : '';
 
+
+
                     $flattened_data[] = array(
                         'lektion' => $lesson_name,
                         'tid' => json_encode(array($start_time, $end_time, $total_minutes)),
@@ -317,28 +319,31 @@ class Schedule {
                 echo "Unexpected time format in line: " . json_encode($row) . "\n";
             }
         }
-
         // Sort lessons by start time for each day
         foreach ($schedule as $day => &$lessons) {
             usort($lessons, function($a, $b) {
                 return $a[0] - $b[0];
             });
         }
-
         // Determine maximum number of lessons in any day
         $max_rows = 0;
-        foreach ($schedule as $day => $lessons) {
-            $max_rows = max($max_rows, count($lessons));
+        foreach ($schedule as $day_test) {
+            $max_rows = max($max_rows, count($day_test));
+            echo "Max rows: " . $max_rows . "<br>";
         }
 
+        
         // Create dataframe schedule
         $df_schedule = array();
         for ($i = 0; $i < $max_rows; $i++) {
             $row = array();
             foreach ($days as $day) {
+               
                 if (isset($schedule[$day][$i])) {
                     $start_time_str = date('H:i', $schedule[$day][$i][0]);
                     $lesson_str = $schedule[$day][$i][2] . " (" . $start_time_str . "-" . $schedule[$day][$i][1];
+                    // no friday here
+                    // echo $lesson_str . "<br>";
                     if ($schedule[$day][$i][3] != '') {
                         $lesson_str .= "," . $schedule[$day][$i][3];
                     }
@@ -461,6 +466,12 @@ class Schedule {
                             }
                         }
                         foreach ($lessons as $lesson) {
+
+                            // check if the day is friday then echo it all
+                            // if ($day == "Fredag") {
+                            //     echo "Fredag: " . json_encode($lesson) . "<br>";
+                            // }
+
                             $start_time = $lesson['start_time'];
                             $end_time = $lesson['end_time'];
                             $lesson_name = $lesson['lesson_name'];
