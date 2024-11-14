@@ -189,16 +189,8 @@
         setupSchedule();
         updateTime();
 
-        // Initial setup
-        const timer = setInterval(() => {
-            location.reload();
-        }, 1000 * 60);
+        setInterval(updateTime, 1000 * 5);
 
-        window.addEventListener('beforeunload', () => {
-            clearInterval(timer);
-        });
-
-        // Listen for window resize to adjust behavior
         window.addEventListener('resize', () => {
             location.reload();
         });
