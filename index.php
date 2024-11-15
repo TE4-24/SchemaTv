@@ -191,6 +191,10 @@
 
         setInterval(updateTime, 1000 * 5);
 
+        setInterval(() => {
+            location.reload();
+        }, 1000 * 60 * 60 * 12);
+
         window.addEventListener('resize', () => {
             location.reload();
         });
