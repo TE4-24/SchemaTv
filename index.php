@@ -107,7 +107,7 @@
                 // Wait for the fade-out animation to complete before fetching the new schedule
                 setTimeout(() => {
                     fetch(
-                            `fetch_schedule.php?className=${currentBaseClass}&dayOfWeek=${dayOfWeek}&currentTime=${currentTime}`
+                            `fetch_schedule.php?className=${currentBaseClass}&dayOfWeek={date("w") - 1}&currentTime=${currentTime}`
                         )
                         .then(response => response.text())
                         .then(data => {
