@@ -71,6 +71,7 @@
     <script>
     const dayOfWeek = <?php echo $dayOfWeek; ?>;
     const currentTime = "<?php echo $currentTime; ?>";
+    let time;
 
     document.addEventListener('DOMContentLoaded', () => {
         function setupSchedule() {
@@ -107,7 +108,7 @@
                 // Wait for the fade-out animation to complete before fetching the new schedule
                 setTimeout(() => {
                     fetch(
-                            `fetch_schedule.php?className=${currentBaseClass}&dayOfWeek={date("w") - 1}&currentTime=${currentTime}`
+                            `fetch_schedule.php?className=${currentBaseClass}&dayOfWeek={date("w") - 1}&currentTime=${time}`
                         )
                         .then(response => response.text())
                         .then(data => {
@@ -179,7 +180,7 @@
 
         //hours and minutes in european format
         function updateTime() {
-            let time = new Date().toLocaleTimeString('en-GB', {
+            time = new Date().toLocaleTimeString('en-GB', {
                 hour: '2-digit',
                 minute: '2-digit'
             });
