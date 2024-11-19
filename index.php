@@ -6,17 +6,6 @@
     <link rel="stylesheet" type="text/css" href="style.css" />
     <link rel="shortcut icon" href="ntilogo.svg" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <style>
-    #clock {
-        position: absolute;
-        bottom: 5%;
-        font-size: 60px;
-        color: #fff;
-        font-family: "Courier New", Courier, monospace;
-        font-weight: bold;
-    }
-    </style>
 </head>
 
 <body>
@@ -72,6 +61,7 @@
     const dayOfWeek = <?php echo $dayOfWeek; ?>;
     const currentTime = "<?php echo $currentTime; ?>";
     let time;
+    let day;
 
     document.addEventListener('DOMContentLoaded', () => {
         function setupSchedule() {
@@ -108,7 +98,7 @@
                 // Wait for the fade-out animation to complete before fetching the new schedule
                 setTimeout(() => {
                     fetch(
-                            `fetch_schedule.php?className=${currentBaseClass}&dayOfWeek={date("w") - 1}&currentTime=${time}`
+                            `fetch_schedule.php?className=${currentBaseClass}&dayOfWeek=${day}&currentTime=${time}`
                         )
                         .then(response => response.text())
                         .then(data => {
@@ -178,6 +168,11 @@
             });
         }
 
+        // create a fuction to update the day of the week
+        function updateDay() {
+            day = new Date().getDay() - 1;
+        }
+
         //hours and minutes in european format
         function updateTime() {
             time = new Date().toLocaleTimeString('en-GB', {
@@ -189,12 +184,11 @@
 
         setupSchedule();
         updateTime();
+        updateDay();
 
         setInterval(updateTime, 1000 * 5);
 
-        setInterval(() => {
-            location.reload();
-        }, 1000 * 60 * 60 * 12);
+        setInterval(updateDay, 1000 * 60 * 60);
 
         window.addEventListener('resize', () => {
             location.reload();
