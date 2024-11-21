@@ -39,7 +39,6 @@
 
     <!-- Class Picker (visible on small screens) -->
     <div class="picker-container">
-        <label for="class-picker">Choose your class:</label>
         <select id="class-picker">
             <?php
             foreach ($allClasses as $className) {
@@ -62,10 +61,11 @@
     const currentTime = "<?php echo $currentTime; ?>";
     let time;
     let day;
+    let screenWidth;
 
     document.addEventListener('DOMContentLoaded', () => {
         function setupSchedule() {
-            const screenWidth = window.innerWidth;
+            screenWidth = window.innerWidth;
 
             if (screenWidth >= 768) {
                 // Hide class picker and show rotating schedule
@@ -191,7 +191,14 @@
         setInterval(updateDay, 1000 * 60 * 60);
 
         window.addEventListener('resize', () => {
-            location.reload();
+            screenwidth = window.innerWidth;
+            if (screenwidth >= 768 && document.querySelector('.picker-container').style.display ===
+                'block') {
+                location.reload();
+            } else if (screenwidth < 768 && document.querySelector('.picker-container').style
+                .display === 'none') {
+                location.reload();
+            }
         });
     });
     </script>

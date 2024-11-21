@@ -101,10 +101,9 @@ body {
   align-items: center;
   padding: 15px;
   margin: 5px 0;
-  color: #ebebeb;
+  color: rgba(235, 235, 235, 0.6);
   border-bottom: 2px solid;
   border-color: #ebebeb !important;
-  /* margin-top: -25px; */
 }
 
 .schema > div:first-child {
@@ -123,11 +122,12 @@ body {
 }
 
 .greyed-out {
-  color: rgba(255, 255, 255, 0.178) !important;
+  color: rgba(255, 255, 255, 0.1) !important;
+  font-weight: lighter !important;
 }
 
 .current-lesson {
-  color: #222 !important;
+  color: #222222 !important;
   background: linear-gradient(120deg, #ff66cc, #ff99ff) !important;
 }
 
@@ -147,10 +147,10 @@ body {
 .picker-container select {
   font-size: 36px;
   padding: 5px 10px;
-  border-radius: 5px;
-  border: none;
+  border-radius: 15px;
+  border: 5px solid #951b81;
   color: white;
-  background-color: #e774bd;
+  background-color: #e94190;
 }
 
 /* Adjust schedule container for mobile */
