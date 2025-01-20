@@ -562,7 +562,7 @@ function main() {
     $schedule->all_lessons = $schedule->get_all_lessons();
     $schedule->names = $schedule->get_pupil_names();
     $schedule->df = $schedule->convert_to_csv("pupils_lessons.csv");
-    $schedule->lessons = $schedule->format_days_to_lessons("P1");
+    $schedule->lessons = $schedule->format_days_to_lessons("P3");
     $schedule->convert_time_lessons_to_csv("lessons.csv");
     $schedule->df_schedule = $schedule->create_combined_schedule();
     $schedule->schedule = $schedule->create_class_schedule_from_combined_schedule($schedule->df_schedule);
