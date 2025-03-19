@@ -329,7 +329,6 @@ class Schedule {
         $max_rows = 0;
         foreach ($schedule as $day_test) {
             $max_rows = max($max_rows, count($day_test));
-            echo "Max rows: " . $max_rows . "<br>";
         }
 
         
@@ -549,7 +548,6 @@ class Schedule {
                 fputcsv($file, $line);
             }
             fclose($file);
-            echo "Class schedule saved for: " . $kurs . "\n";
         }
     }
 

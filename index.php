@@ -6,6 +6,19 @@
     <link rel="stylesheet" type="text/css" href="style.css" />
     <link rel="shortcut icon" href="ntilogo.svg" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- PWA related meta tags -->
+    <meta name="theme-color" content="#ffffff">
+    <meta name="description" content="Dynamic class schedule application">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Schedule App">
+    
+    <!-- PWA manifest link -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Apple touch icons -->
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
 </head>
 
 <body>
@@ -48,6 +61,13 @@
         </select>
     </div>
 
+    <!-- Day picker container - only visible on mobile -->
+    <div class="day-picker-container">
+        <select id="day-picker">
+            <!-- Days will be populated by JavaScript -->
+        </select>
+    </div>
+
     <!-- Schedule Container for Rotating Schedule (visible on large screens) -->
     <div id="rotating-schedule-container"></div>
 
@@ -56,7 +76,17 @@
     <div id="clock">
     </div>
 
+    <script src="script.js"></script>
     <script>
+    // Register service worker for PWA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(registration => console.log('ServiceWorker registration successful'))
+                .catch(error => console.log('ServiceWorker registration failed:', error));
+        });
+    }
+    
     const dayOfWeek = <?php echo $dayOfWeek; ?>;
     const currentTime = "<?php echo $currentTime; ?>";
     let time;
@@ -64,6 +94,9 @@
     let screenWidth;
 
     document.addEventListener('DOMContentLoaded', () => {
+        // Initialize day picker from script.js
+        initializeDayPicker();
+        
         function setupSchedule() {
             screenWidth = window.innerWidth;
 
@@ -139,12 +172,20 @@
 
             // Function to fetch and display the schedule for the selected class
             function fetchSchedule(className) {
+                // Add the selected day from day picker if on mobile
+                const dayPicker = document.getElementById('day-picker');
+                let selectedDay = dayOfWeek;
+                
+                if (window.innerWidth < 768 && dayPicker) {
+                    selectedDay = parseInt(dayPicker.value);
+                }
+                
                 // Save the selected class in localStorage
                 localStorage.setItem('selectedClass', className);
 
                 // Fetch the schedule via AJAX
                 fetch(
-                        `fetch_schedule.php?className=${className}&dayOfWeek=${dayOfWeek}&currentTime=${currentTime}`
+                        `fetch_schedule.php?className=${className}&dayOfWeek=${selectedDay}&currentTime=${currentTime}`
                     )
                     .then(response => response.text())
                     .then(data => {
@@ -166,6 +207,14 @@
             classPicker.addEventListener('change', () => {
                 fetchSchedule(classPicker.value);
             });
+            
+            // Add event listener to the day picker
+            const dayPicker = document.getElementById('day-picker');
+            if (dayPicker) {
+                dayPicker.addEventListener('change', () => {
+                    fetchSchedule(classPicker.value);
+                });
+            }
         }
 
         // create a fuction to update the day of the week

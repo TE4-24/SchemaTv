@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="adminStyle.css">
+    <link rel="stylesheet" href="/admin/adminStyle.css" type="text/css">
     <title>File Upload</title>
 </head>
 
@@ -33,20 +33,20 @@
             if ($_POST['password'] === $password) {
                 $_SESSION['loggedin'] = true;
             } else {
-                echo "<p style='color:red;'>Incorrect password.</p>";
+                echo "<p class='error'>Incorrect password.</p>";
             }
         }
 
         if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-            echo "<form action='/admin/index.php' method='post'>";
-            echo "<input type='password' name='password' placeholder='Enter Password'>";
-            echo "<input type='submit' value='Login'>";
+            echo "<form action='/admin/index.php' method='post' class='login-form'>";
+            echo "<input type='password' name='password' placeholder='Enter Password' class='input-field'>";
+            echo "<input type='submit' value='Login' class='submit-button'>";
             echo "</form>";
         } else {
             echo "<div class='uploadContainer'>";
-            echo "<form action='/admin/index.php' method='post' enctype='multipart/form-data'>";
+            echo "<form action='/admin/index.php' method='post' enctype='multipart/form-data' class='upload-form'>";
             echo "<input type='file' name='fileToUpload' id='fileToUpload' class='chooseFolder'>";
-            echo "<input type='submit' value='Upload' name='submit'>";
+            echo "<input type='submit' value='Upload' name='submit' class='submit-button'>";
             echo "</form>";
             echo "</div>";
 
@@ -60,21 +60,21 @@
                 $fileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
                 if ($fileType != "txt") {
-                    echo "Sorry, only TXT files are allowed.";
+                    echo "<p class='error'>Sorry, only TXT files are allowed.</p>";
                     $uploadOk = 0;
                 }
 
                 if ($uploadOk == 0) {
-                    echo "Sorry, your file was not uploaded.";
+                    echo "<p class='error'>Sorry, your file was not uploaded.</p>";
                 } else {
-                    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], to: $target_dir . "schema.txt")) {
-                        echo "The file has been uploaded.";
+                    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_dir . "schema.txt")) {
+                        echo "<p class='success'>The file has been uploaded.";
 
                         // include php converter in ../csv_converter.php
                         include '../csv_converter.php';
 
                     } else {
-                        echo "Sorry, there was an error uploading your file.";
+                        echo "<p class='error'>Sorry, there was an error uploading your file.</p>";
                     }
                 }
             }
