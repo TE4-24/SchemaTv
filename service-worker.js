@@ -6,6 +6,16 @@ const urlsToCache = [
   "/script.js",
   "/ntilogo.svg",
   "/manifest.json",
+  "/admin/class_schedules/EE22.csv",
+  "/admin/class_schedules/EE23.csv",
+  "/admin/class_schedules/EE24.csv",
+  "/admin/class_schedules/ES22.csv",
+  "/admin/class_schedules/ES23.csv",
+  "/admin/class_schedules/ES24.csv",
+  "/admin/class_schedules/TE22.csv",
+  "/admin/class_schedules/TE23.csv",
+  "/admin/class_schedules/TE24.csv",
+  "/admin/combined_schedule/schedule.csv",
 ];
 
 self.addEventListener("install", (event) => {
