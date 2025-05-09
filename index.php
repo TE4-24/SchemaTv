@@ -103,6 +103,7 @@
             if (screenWidth >= 768) {
                 // Hide class picker and show rotating schedule
                 document.querySelector('.picker-container').style.display = 'none';
+                // document.getElementById('day-picker').style.display = 'none';
                 document.getElementById('class-picker-schedule-container').style.display = 'none';
                 document.getElementById('rotating-schedule-container').style.display = 'block';
 

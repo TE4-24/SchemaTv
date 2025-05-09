@@ -1,15 +1,15 @@
-const CACHE_NAME = "schedule-app-v1";
+const CACHE_NAME = "dynamic-schedule-cache-v1";
 const urlsToCache = [
   "/",
   "/index.php",
   "/style.css",
   "/script.js",
   "/ntilogo.svg",
-  "/fetch_schedule.php",
+  "/manifest.json",
 ];
 
-// Install a service worker
 self.addEventListener("install", (event) => {
+  // Perform install steps
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log("Opened cache");
@@ -18,7 +18,6 @@ self.addEventListener("install", (event) => {
   );
 });
 
-// Cache and return requests
 self.addEventListener("fetch", (event) => {
   event.respondWith(
     caches.match(event.request).then((response) => {
@@ -26,26 +25,11 @@ self.addEventListener("fetch", (event) => {
       if (response) {
         return response;
       }
-      return fetch(event.request).then((response) => {
-        // Check if we received a valid response
-        if (!response || response.status !== 200 || response.type !== "basic") {
-          return response;
-        }
-
-        // Clone the response
-        const responseToCache = response.clone();
-
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
-
-        return response;
-      });
+      return fetch(event.request);
     })
   );
 });
 
-// Update a service worker
 self.addEventListener("activate", (event) => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
